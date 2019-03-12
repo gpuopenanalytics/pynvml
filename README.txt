@@ -1,7 +1,3 @@
-======
-pyNVML
-======
-
 ------------------------------------------------
 Python bindings to the NVIDIA Management Library
 ------------------------------------------------
@@ -11,9 +7,6 @@ Provides a Python interface to GPU management and monitoring functions.
 This is a wrapper around the NVML library.
 For information about the NVML library, see the NVML developer page
 http://developer.nvidia.com/nvidia-management-library-nvml
-
-Download the latest package from:
-http://pypi.python.org/pypi/nvidia-ml-py/
 
 Note this file can be run with 'python -m doctest -v README.txt'
 although the results are system dependent
@@ -134,9 +127,12 @@ Version 7.346.0
 Version 7.352.0
 - Added new functions for NVML 7.352.  See NVML documentation for more information.
 Version 8.0.0
+- Refactor code to a nvidia_smi singleton class
 - Added DeviceQuery that returns a dictionary of (name, value).
 - Added fitler parameters on DeviceQuery to match query api in nvidia-smi
+- Added fitler parameters on XmlDeviceQuery to match query api in nvidia-smi
 - Added integer enumeration for filter strings to reduce overhead for performance monitoring.
+- Added loop(filter) method with async and callback support 
 
 
 COPYRIGHT
