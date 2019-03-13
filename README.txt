@@ -129,8 +129,8 @@ Version 7.352.0
 Version 8.0.0
 - Refactor code to a nvidia_smi singleton class
 - Added DeviceQuery that returns a dictionary of (name, value).
-- Added fitler parameters on DeviceQuery to match query api in nvidia-smi
-- Added fitler parameters on XmlDeviceQuery to match query api in nvidia-smi
+- Added filter parameters on DeviceQuery to match query api in nvidia-smi
+- Added filter parameters on XmlDeviceQuery to match query api in nvidia-smi
 - Added integer enumeration for filter strings to reduce overhead for performance monitoring.
 - Added loop(filter) method with async and callback support 
 
