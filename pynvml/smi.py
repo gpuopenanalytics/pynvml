@@ -1,4 +1,4 @@
-#####
+# ============================================================================ #
 # Copyright (c) 2011-2019, NVIDIA Corporation.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -24,41 +24,47 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGE.
-#####
+# ============================================================================ #
 
-#
-# nvidia_smi
-# nvml_bindings@nvidia.com
-#
-# Sample code that attempts to reproduce the output of nvidia-smi -q -x
-# For many cases the output should match.
-# Each query parameter is documented within nvdia-smi --help-query-gpu
-#
-# Can be used as a library or a command line script
-#
-# To Run:
-# $ python nvidia_smi.py
-# $ python nvidia_smi.py "--help"
-# $ python nvidia_smi.py "--help_query_gpu"
-# $ python nvidia_smi.py "pci.bus_id,memory.total,memory.free"
-#
-# From Code:
-# DeviceQuery()
-# DeviceQuery("--help")
-# DeviceQuery("--help_query_gpu")
-# DeviceQuery("pci.bus_id,memory.total,memory.free")
-# DeviceQuery([NVSMI_PCI_BUS_ID, NVSMI_MEMORY_TOTAL, NVSMI_MEMORY_FREE])
-#
-# XmlDeviceQuery()
-# XmlDeviceQuery("--help")
-# XmlDeviceQuery("--help_query_gpu")
+"""
+nvidia_smi
+nvml_bindings@nvidia.com
 
+Sample code that attempts to reproduce the output of nvidia-smi -q -x
+For many cases the output should match.
+Each query parameter is documented within nvdia-smi --help-query-gpu
 
-from nvml.pynvml import *
+Can be used as a library or a command line script
+
+To Run:
+$ python nvidia_smi.py
+$ python nvidia_smi.py "--help"
+$ python nvidia_smi.py "--help_query_gpu"
+$ python nvidia_smi.py "pci.bus_id,memory.total,memory.free"
+
+From Code:
+DeviceQuery()
+DeviceQuery("--help")
+DeviceQuery("--help_query_gpu")
+DeviceQuery("pci.bus_id,memory.total,memory.free")
+DeviceQuery([NVSMI_PCI_BUS_ID, NVSMI_MEMORY_TOTAL, NVSMI_MEMORY_FREE])
+
+XmlDeviceQuery()
+XmlDeviceQuery("--help")
+XmlDeviceQuery("--help_query_gpu")
+"""
+
+from pynvml.nvml import *
 import datetime
 import collections
 import time
 from threading import Thread
+
+## ========================================================================== ##
+##                                                                            ##
+##                              Enumerations                                  ##
+##                                                                            ##
+## ========================================================================== ##
 
 #Details and descriptions for enumerations in help_query_gpu.txt
 NVSMI_ALL = -1
@@ -67,7 +73,7 @@ NVSMI_TIMESTAMP = 1
 NVSMI_DRIVER_VERSION = 2
 NVSMI_COUNT = 3
 NVSMI_NAME = 4
-NVSMI_SERIALNUMBER = 5         
+NVSMI_SERIALNUMBER = 5
 NVSMI_UUID = 6
 NVSMI_PCI_BUS_ID = 7
 NVSMI_PCI_DOMAIN = 8
@@ -329,6 +335,11 @@ NVSMI_BRAND_NAMES = {NVML_BRAND_UNKNOWN :  "Unknown",
                      NVML_BRAND_GEFORCE :  "GeForce",
 }
 
+## ========================================================================== ##
+##                                                                            ##
+##                             nvidia_smi Class                               ##
+##                                                                            ##
+## ========================================================================== ##
 
 class nvidia_smi:
   __instance = None
@@ -404,7 +415,7 @@ class nvidia_smi:
   @staticmethod
   def __initialize_nvml():
     ''' Initialize NVML bindings. '''
-    nvmlInit()
+    nvml_init()
     deviceCount = nvmlDeviceGetCount()
     handles = {}
     for i in range(0, deviceCount):
@@ -416,7 +427,7 @@ class nvidia_smi:
         del(nvidia_smi.__instance)
         nvidia_smi.__instance = None
         nvidia_smi.__handles = None
-        nvmlShutdown()
+        nvml_finalize()
 
   #
   # Helper functions

@@ -4,15 +4,15 @@ import os
 
 # Fixture to initialize and finalize nvml
 @pytest.fixture(scope='module')
-def nvml_init(request):
-    nvmlInit()
+def nvml_open(request):
+    nvml_init()
     def nvml_close():
-        nvmlShutdown()
+        nvml_finalize()
     request.addfinalizer(nvml_close)
 
 # Get GPU count
 @pytest.fixture
-def get_gpu_count(nvml_init):
+def get_gpu_count(nvml_open):
     pytest.ngpus = nvmlDeviceGetCount()
     print('['+str(pytest.ngpus)+' GPUs]', end =' ')
     assert(pytest.ngpus>0)
@@ -43,21 +43,21 @@ def get_gpu_pci_info(get_gpu_handles):
 ## ---------------------------- ##
 
 # Test nvmlSystemGetNVMLVersion
-def test_nvmlSystemGetNVMLVersion(nvml_init):
+def test_nvmlSystemGetNVMLVersion(nvml_open):
     vsn = 0.0
     vsn = float(nvmlSystemGetDriverVersion().decode())
     print('[NVML Version: '+str(vsn)+']', end =' ')
     assert(vsn!=0.0)
 
 # Test nvmlSystemGetProcessName
-def test_nvmlSystemGetProcessName(nvml_init):
+def test_nvmlSystemGetProcessName(nvml_open):
     procname = None
     procname = nvmlSystemGetProcessName( os.getpid() )
     print('[Process: '+str(procname.decode())+']', end =' ')
     assert(procname!=None)
 
 # Test nvmlSystemGetDriverVersion
-def test_nvmlSystemGetDriverVersion(nvml_init):
+def test_nvmlSystemGetDriverVersion(nvml_open):
     vsn = float(nvmlSystemGetDriverVersion().decode())
     print('[Driver Version: '+str(vsn)+']', end =' ')
     assert((vsn > 396.0) and (vsn < 397.0)) # Developing with 396.44

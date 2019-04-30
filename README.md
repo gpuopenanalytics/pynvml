@@ -26,7 +26,7 @@ You can use the lower level nvml bindings
 
 ```python
 >>> from pynvml.nvml import *
->>> nvmlInit()
+>>> nvml_init()
 >>> print "Driver Version:", nvmlSystemGetDriverVersion()
 Driver Version: 410.00
 >>> deviceCount = nvmlDeviceGetCount()
@@ -36,7 +36,7 @@ Driver Version: 410.00
 ...
 Device 0 : Tesla V100
 
->>> nvmlShutdown()
+>>> nvml_finalize()
 ```
 
 Or the higher level nvidia_smi API
@@ -74,7 +74,7 @@ Each function's use is the same with the following exceptions:
     ```
 
     ```python
-    >>> nvmlInit()
+    >>> nvml_init()
     >>> handle = nvmlDeviceGetHandleByIndex(0)
     >>> (current, pending) = nvmlDeviceGetEccMode(handle)
     ```
@@ -110,7 +110,7 @@ Each function's use is the same with the following exceptions:
 
     ```python
     >>> version = nvmlSystemGetDriverVersion();
-    >>> nvmlShutdown()
+    >>> nvml_finalize()
     ```
 
 For usage information see the NVML documentation.
