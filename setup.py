@@ -1,19 +1,29 @@
-from distutils.core import setup
-from sys import version
+from setuptools import setup, find_packages
+from os import path
+from io import open
+
+here = path.abspath(path.dirname(__file__))
+
+# Get the long description from the README file
+with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 # earlier versions don't support all classifiers
-if version < '2.2.3':
-    from distutils.dist import DistributionMetadata
-    DistributionMetadata.classifiers = None
-    DistributionMetadata.download_url = None
+#if version < '2.2.3':
+#    from distutils.dist import DistributionMetadata
+#    DistributionMetadata.classifiers = None
+#    DistributionMetadata.download_url = None
 
-_package_name='nvidia-ml-py'
+package_name='nvidia-ml-py'
 
-setup(name=_package_name,
-      version='7.352.0',
+setup(name=package_name,
+      version='7.352.1',
       description='Python Bindings for the NVIDIA Management Library',
-      py_modules=['pynvml', 'nvidia_smi'],
-      package_data={_package_name: ['README.txt','help_query_gpu.txt']},
+      long_description=long_description,
+      long_description_content_type='text/markdown',
+      packages=find_packages(exclude=['notebooks', 'docs', 'tests']),
+      #py_modules=['pynvml', 'nvidia_smi'],
+      package_data={package_name: ['README.txt','help_query_gpu.txt']},
       license="BSD",
       url="http://www.nvidia.com/",
       author="NVIDIA Corporation",
@@ -31,4 +41,3 @@ setup(name=_package_name,
           'Topic :: System :: Systems Administration',
           ],
       )
-
