@@ -35,7 +35,6 @@ import sys
 import os
 import threading
 import string
-#from nvml_types import *
 
 ## C Type mappings ##
 ## Enums
@@ -228,7 +227,6 @@ NVML_DEVICE_PCI_BUS_ID_BUFFER_SIZE           = 16
 
 NVML_VALUE_NOT_AVAILABLE_ulonglong = c_ulonglong(-1)
 NVML_VALUE_NOT_AVAILABLE_uint = c_uint(-1)
-
 
 ## Lib loading ##
 nvmlLib = None
