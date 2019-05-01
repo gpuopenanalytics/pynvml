@@ -4,26 +4,26 @@ import os
 
 # Fixture to initialize and finalize nvml
 @pytest.fixture(scope='module')
-def get_instance(request):
-    pytest.nvsmi = nvidia_smi.getInstance()
+def smi(request):
+    return nvidia_smi.getInstance()
 
 @pytest.fixture
-def get_count(get_instance):
-    pytest.ngpus = pytest.nvsmi.DeviceQuery('count')['count']
-    print('['+str(pytest.ngpus)+' GPUs]', end =' ')
-    assert(pytest.ngpus>0)
+def ngpus(smi):
+    result = smi.DeviceQuery('count')['count']
+    assert result > 0
+    print('['+str(result)+' GPUs]', end =' ')
+    return result
 
 ## ---------------------------- ##
 ##       Start Query Tests      ##
 ## ---------------------------- ##
 
 # Test free-memory query
-def test_query_memory(get_count):
-    def _free_mem_query(j):
-        return pytest.nvsmi.DeviceQuery('memory.free')['gpu'][j]['fb_memory_usage']['free']
-    for i in range(pytest.ngpus):
-        free_mem = _free_mem_query(i)
-        assert(free_mem >= 0)
+def test_query_memory(ngpus, smi):
+    result = smi.DeviceQuery('memory.free')
+    for i in range(ngpus):
+        assert result['gpu'][i]['fb_memory_usage']['free'] >= 0
+
 
 # Test gpu-utilization query
 def test_gpu_utilization(get_count):
