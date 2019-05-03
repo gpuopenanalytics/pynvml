@@ -14,19 +14,17 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 #    DistributionMetadata.classifiers = None
 #    DistributionMetadata.download_url = None
 
-package_name='nvidia-ml-py'
-
-setup(name=package_name,
-      version='8.0.1',
+setup(name='pynvml',
+      version='8.0.0',
       description='Python Bindings for the NVIDIA Management Library',
       long_description=long_description,
       long_description_content_type='text/markdown',
       packages=find_packages(exclude=['notebooks', 'docs', 'tests']),
-      package_data={package_name: ['README.txt','help_query_gpu.txt']},
+      package_data={package_name: ['README.md','help_query_gpu.txt']},
       license="BSD",
       url="http://www.nvidia.com/",
       author="NVIDIA Corporation",
-      author_email="nvml-bindings@nvidia.com",
+      author_email="rzamora@nvidia.com",
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Intended Audience :: Developers',
