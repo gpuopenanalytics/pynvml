@@ -17,12 +17,11 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 package_name='nvidia-ml-py'
 
 setup(name=package_name,
-      version='7.352.1',
+      version='8.0.1',
       description='Python Bindings for the NVIDIA Management Library',
       long_description=long_description,
       long_description_content_type='text/markdown',
       packages=find_packages(exclude=['notebooks', 'docs', 'tests']),
-      #py_modules=['pynvml', 'nvidia_smi'],
       package_data={package_name: ['README.txt','help_query_gpu.txt']},
       license="BSD",
       url="http://www.nvidia.com/",

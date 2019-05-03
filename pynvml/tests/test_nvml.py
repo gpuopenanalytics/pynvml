@@ -1,210 +1,219 @@
-from pynvml.nvml import *
+import pynvml
 import pytest
 import os
 
+NVML_PCIE_UTIL_TX_BYTES = pynvml.NVML_PCIE_UTIL_TX_BYTES
+NVML_PCIE_UTIL_RX_BYTES = pynvml.NVML_PCIE_UTIL_RX_BYTES
+NVML_PCIE_UTIL_COUNT = pynvml.NVML_PCIE_UTIL_COUNT
+
 # Fixture to initialize and finalize nvml
 @pytest.fixture(scope='module')
-def nvml_open(request):
-    nvml_init()
+def nvml(request):
+    pynvml.nvmlInit()
     def nvml_close():
-        nvml_finalize()
+        pynvml.nvmlShutdown()
     request.addfinalizer(nvml_close)
 
 # Get GPU count
 @pytest.fixture
-def get_gpu_count(nvml_open):
-    pytest.ngpus = nvmlDeviceGetCount()
-    print('['+str(pytest.ngpus)+' GPUs]', end =' ')
-    assert(pytest.ngpus>0)
+def ngpus(nvml):
+    result = pynvml.nvmlDeviceGetCount()
+    assert result > 0
+    print('['+str(result)+' GPUs]', end =' ')
+    return result
 
-# Get handles using nvmlDeviceGetHandleByIndex
+# Get handles using pynvml.nvmlDeviceGetHandleByIndex
 @pytest.fixture
-def get_gpu_handles(get_gpu_count):
-    pytest.handles = [ nvmlDeviceGetHandleByIndex(i) for i in range(pytest.ngpus) ]
-    assert(len(pytest.handles)==pytest.ngpus)
-
-@pytest.fixture
-def get_gpu_serials(get_gpu_handles):
-    pytest.serials = [ nvmlDeviceGetSerial(pytest.handles[i]) for i in range(pytest.ngpus) ]
-    assert(len(pytest.serials)==pytest.ngpus)
+def handles(ngpus):
+    handles = [ pynvml.nvmlDeviceGetHandleByIndex(i) for i in range(ngpus) ]
+    assert len(handles) == ngpus
+    return handles
 
 @pytest.fixture
-def get_gpu_uuids(get_gpu_handles):
-    pytest.uuids = [ nvmlDeviceGetUUID(pytest.handles[i]) for i in range(pytest.ngpus) ]
-    assert(len(pytest.uuids)==pytest.ngpus)
+def serials(ngpus, handles):
+    serials = [ pynvml.nvmlDeviceGetSerial(handles[i]) for i in range(ngpus) ]
+    assert len(serials) == ngpus
+    return serials
 
 @pytest.fixture
-def get_gpu_pci_info(get_gpu_handles):
-    pytest.pci_info = [ nvmlDeviceGetPciInfo(pytest.handles[i]) for i in range(pytest.ngpus) ]
-    assert(len(pytest.pci_info)==pytest.ngpus)
+def uuids(ngpus, handles):
+    uuids = [ pynvml.nvmlDeviceGetUUID(handles[i]) for i in range(ngpus) ]
+    assert len(uuids) == ngpus
+    return uuids
+
+@pytest.fixture
+def pci_info(ngpus, handles):
+    pci_info = [ pynvml.nvmlDeviceGetPciInfo(handles[i]) for i in range(ngpus) ]
+    assert len(pci_info) == ngpus
+    return pci_info
 
 ## ---------------------------- ##
 ## Start Fucntion-pointer Tests ##
 ## ---------------------------- ##
 
-# Test nvmlSystemGetNVMLVersion
-def test_nvmlSystemGetNVMLVersion(nvml_open):
+# Test pynvml.nvmlSystemGetNVMLVersion
+def test_nvmlSystemGetNVMLVersion(nvml):
     vsn = 0.0
-    vsn = float(nvmlSystemGetDriverVersion().decode())
+    vsn = float(pynvml.nvmlSystemGetDriverVersion().decode())
     print('[NVML Version: '+str(vsn)+']', end =' ')
-    assert(vsn!=0.0)
+    assert vsn > 0.0
 
-# Test nvmlSystemGetProcessName
-def test_nvmlSystemGetProcessName(nvml_open):
+# Test pynvml.nvmlSystemGetProcessName
+def test_nvmlSystemGetProcessName(nvml):
     procname = None
-    procname = nvmlSystemGetProcessName( os.getpid() )
+    procname = pynvml.nvmlSystemGetProcessName(os.getpid())
     print('[Process: '+str(procname.decode())+']', end =' ')
-    assert(procname!=None)
+    assert procname != None
 
-# Test nvmlSystemGetDriverVersion
-def test_nvmlSystemGetDriverVersion(nvml_open):
-    vsn = float(nvmlSystemGetDriverVersion().decode())
+# Test pynvml.nvmlSystemGetDriverVersion
+def test_nvmlSystemGetDriverVersion(nvml):
+    vsn = 0.0
+    vsn = float(pynvml.nvmlSystemGetDriverVersion().decode())
     print('[Driver Version: '+str(vsn)+']', end =' ')
-    assert((vsn > 396.0) and (vsn < 397.0)) # Developing with 396.44
+    assert vsn > 0.0 # Developing with 396.44
 
 ## Unit "Get" Functions (Skipping for now) ##
 
 ## Device "Get" Functions (Note: Some functions are fixtures, above) ##
 
-# Test nvmlDeviceGetHandleBySerial
-def test_nvmlDeviceGetHandleBySerial(get_gpu_serials):
-    handles = [ nvmlDeviceGetHandleBySerial(pytest.serials[i]) for i in range(pytest.ngpus) ]
-    assert(len(pytest.handles)==len(handles))
+# Test pynvml.nvmlDeviceGetHandleBySerial
+def test_nvmlDeviceGetHandleBySerial(ngpus, serials):
+    handles = [ pynvml.nvmlDeviceGetHandleBySerial(serials[i]) for i in range(ngpus) ]
+    assert len(handles) == ngpus
 
-# Test nvmlDeviceGetHandleByUUID
-def test_nvmlDeviceGetHandleByUUID(get_gpu_uuids):
-    handles = [ nvmlDeviceGetHandleByUUID(pytest.uuids[i]) for i in range(pytest.ngpus) ]
-    assert(len(pytest.handles)==len(handles))
+# Test pynvml.nvmlDeviceGetHandleByUUID
+def test_nvmlDeviceGetHandleByUUID(ngpus, uuids):
+    handles = [ pynvml.nvmlDeviceGetHandleByUUID(uuids[i]) for i in range(ngpus) ]
+    assert len(handles) == ngpus
 
-# Test nvmlDeviceGetHandleByPciBusId
-def test_nvmlDeviceGetHandleByPciBusId(get_gpu_pci_info):
-    handles = [ nvmlDeviceGetHandleByPciBusId(pytest.pci_info[i].busId) for i in range(pytest.ngpus) ]
-    assert(len(pytest.handles)==len(handles))
+# Test pynvml.nvmlDeviceGetHandleByPciBusId
+def test_nvmlDeviceGetHandleByPciBusId(ngpus, pci_info):
+    handles = [ pynvml.nvmlDeviceGetHandleByPciBusId(pci_info[i].busId) for i in range(ngpus) ]
+    assert len(handles) == ngpus
 
-# [Skipping] nvmlDeviceGetName
-# [Skipping] nvmlDeviceGetBoardId
-# [Skipping] nvmlDeviceGetMultiGpuBoard
-# [Skipping] nvmlDeviceGetBrand
-# [Skipping] nvmlDeviceGetCpuAffinity
-# [Skipping] nvmlDeviceSetCpuAffinity
-# [Skipping] nvmlDeviceClearCpuAffinity
-# [Skipping] nvmlDeviceGetMinorNumber
-# [Skipping] nvmlDeviceGetUUID
-# [Skipping] nvmlDeviceGetInforomVersion
-# [Skipping] nvmlDeviceGetInforomImageVersion
-# [Skipping] nvmlDeviceGetInforomConfigurationChecksum
-# [Skipping] nvmlDeviceValidateInforom
-# [Skipping] nvmlDeviceGetDisplayMode
-# [Skipping] nvmlDeviceGetPersistenceMode
-# [Skipping] nvmlDeviceGetClockInfo
-# [Skipping] nvmlDeviceGetMaxClockInfo
-# [Skipping] nvmlDeviceGetApplicationsCloc
-# [Skipping] nvmlDeviceGetDefaultApplicationsClock
-# [Skipping] nvmlDeviceGetSupportedMemoryClocks
-# [Skipping] nvmlDeviceGetSupportedGraphicsClocks
-# [Skipping] nvmlDeviceGetFanSpeed
-# [Skipping] nvmlDeviceGetTemperature
-# [Skipping] nvmlDeviceGetTemperatureThreshold
-# [Skipping] nvmlDeviceGetPowerState
-# [Skipping] nvmlDeviceGetPerformanceState
-# [Skipping] nvmlDeviceGetPowerManagementMode
-# [Skipping] nvmlDeviceGetPowerManagementLimit
-# [Skipping] nvmlDeviceGetPowerManagementLimitConstraints
-# [Skipping] nvmlDeviceGetPowerManagementDefaultLimit
-# [Skipping] nvmlDeviceGetEnforcedPowerLimit
+# [Skipping] pynvml.nvmlDeviceGetName
+# [Skipping] pynvml.nvmlDeviceGetBoardId
+# [Skipping] pynvml.nvmlDeviceGetMultiGpuBoard
+# [Skipping] pynvml.nvmlDeviceGetBrand
+# [Skipping] pynvml.nvmlDeviceGetCpuAffinity
+# [Skipping] pynvml.nvmlDeviceSetCpuAffinity
+# [Skipping] pynvml.nvmlDeviceClearCpuAffinity
+# [Skipping] pynvml.nvmlDeviceGetMinorNumber
+# [Skipping] pynvml.nvmlDeviceGetUUID
+# [Skipping] pynvml.nvmlDeviceGetInforomVersion
+# [Skipping] pynvml.nvmlDeviceGetInforomImageVersion
+# [Skipping] pynvml.nvmlDeviceGetInforomConfigurationChecksum
+# [Skipping] pynvml.nvmlDeviceValidateInforom
+# [Skipping] pynvml.nvmlDeviceGetDisplayMode
+# [Skipping] pynvml.nvmlDeviceGetPersistenceMode
+# [Skipping] pynvml.nvmlDeviceGetClockInfo
+# [Skipping] pynvml.nvmlDeviceGetMaxClockInfo
+# [Skipping] pynvml.nvmlDeviceGetApplicationsCloc
+# [Skipping] pynvml.nvmlDeviceGetDefaultApplicationsClock
+# [Skipping] pynvml.nvmlDeviceGetSupportedMemoryClocks
+# [Skipping] pynvml.nvmlDeviceGetSupportedGraphicsClocks
+# [Skipping] pynvml.nvmlDeviceGetFanSpeed
+# [Skipping] pynvml.nvmlDeviceGetTemperature
+# [Skipping] pynvml.nvmlDeviceGetTemperatureThreshold
+# [Skipping] pynvml.nvmlDeviceGetPowerState
+# [Skipping] pynvml.nvmlDeviceGetPerformanceState
+# [Skipping] pynvml.nvmlDeviceGetPowerManagementMode
+# [Skipping] pynvml.nvmlDeviceGetPowerManagementLimit
+# [Skipping] pynvml.nvmlDeviceGetPowerManagementLimitConstraints
+# [Skipping] pynvml.nvmlDeviceGetPowerManagementDefaultLimit
+# [Skipping] pynvml.nvmlDeviceGetEnforcedPowerLimit
 
-# Test nvmlDeviceGetPowerUsage
-def test_nvmlDeviceGetPowerUsage(get_gpu_handles):
-    for i in range(pytest.ngpus):
-        power_watts = nvmlDeviceGetPowerUsage( pytest.handles[i] )
-        assert(power_watts >= 0.0)
+# Test pynvml.nvmlDeviceGetPowerUsage
+def test_nvmlDeviceGetPowerUsage(ngpus, handles):
+    for i in range(ngpus):
+        power_watts = pynvml.nvmlDeviceGetPowerUsage( handles[i] )
+        assert power_watts >= 0.0
 
-# [Skipping] nvmlDeviceGetGpuOperationMode
-# [Skipping] nvmlDeviceGetCurrentGpuOperationMode
-# [Skipping] nvmlDeviceGetPendingGpuOperationMode
+# [Skipping] pynvml.nvmlDeviceGetGpuOperationMode
+# [Skipping] pynvml.nvmlDeviceGetCurrentGpuOperationMode
+# [Skipping] pynvml.nvmlDeviceGetPendingGpuOperationMode
 
-# Test nvmlDeviceGetMemoryInfo
-def test_nvmlDeviceGetMemoryInfo(get_gpu_handles):
-    for i in range(pytest.ngpus):
-        meminfo = nvmlDeviceGetMemoryInfo( pytest.handles[i] )
-        assert((meminfo.used <= meminfo.free) and (meminfo.free <= meminfo.total))
+# Test pynvml.nvmlDeviceGetMemoryInfo
+def test_nvmlDeviceGetMemoryInfo(ngpus, handles):
+    for i in range(ngpus):
+        meminfo = pynvml.nvmlDeviceGetMemoryInfo( handles[i] )
+        assert (meminfo.used <= meminfo.free) and (meminfo.free <= meminfo.total)
 
-# [Skipping] nvmlDeviceGetBAR1MemoryInfo
-# [Skipping] nvmlDeviceGetComputeMode
-# [Skipping] nvmlDeviceGetEccMode
-# [Skipping] nvmlDeviceGetCurrentEccMode (Python API Addition)
-# [Skipping] nvmlDeviceGetPendingEccMode (Python API Addition)
-# [Skipping] nvmlDeviceGetTotalEccErrors
-# [Skipping] nvmlDeviceGetDetailedEccErrors
-# [Skipping] nvmlDeviceGetMemoryErrorCounter
+# [Skipping] pynvml.nvmlDeviceGetBAR1MemoryInfo
+# [Skipping] pynvml.nvmlDeviceGetComputeMode
+# [Skipping] pynvml.nvmlDeviceGetEccMode
+# [Skipping] pynvml.nvmlDeviceGetCurrentEccMode (Python API Addition)
+# [Skipping] pynvml.nvmlDeviceGetPendingEccMode (Python API Addition)
+# [Skipping] pynvml.nvmlDeviceGetTotalEccErrors
+# [Skipping] pynvml.nvmlDeviceGetDetailedEccErrors
+# [Skipping] pynvml.nvmlDeviceGetMemoryErrorCounter
 
-# Test nvmlDeviceGetUtilizationRates
-def test_nvmlDeviceGetUtilizationRates(get_gpu_handles):
-    for i in range(pytest.ngpus):
-        urate = nvmlDeviceGetUtilizationRates( pytest.handles[i] )
-        assert(urate.gpu >= 0)
-        assert(urate.memory >= 0)
-        #print('[urate.gpu: '+str(urate.gpu)+']', end =' ')
+# Test pynvml.nvmlDeviceGetUtilizationRates
+def test_nvmlDeviceGetUtilizationRates(ngpus, handles):
+    for i in range(ngpus):
+        urate = pynvml.nvmlDeviceGetUtilizationRates( handles[i] )
+        assert urate.gpu >= 0
+        assert urate.memory >= 0
 
-# [Skipping] nvmlDeviceGetEncoderUtilization
-# [Skipping] nvmlDeviceGetDecoderUtilization
-# [Skipping] nvmlDeviceGetPcieReplayCounter
-# [Skipping] nvmlDeviceGetDriverModel
-# [Skipping] nvmlDeviceGetCurrentDriverModel
-# [Skipping] nvmlDeviceGetPendingDriverModel
-# [Skipping] nvmlDeviceGetVbiosVersion
-# [Skipping] nvmlDeviceGetComputeRunningProcesses
-# [Skipping] nvmlDeviceGetGraphicsRunningProcesses
-# [Skipping] nvmlDeviceGetAutoBoostedClocksEnabled
+# [Skipping] pynvml.nvmlDeviceGetEncoderUtilization
+# [Skipping] pynvml.nvmlDeviceGetDecoderUtilization
+# [Skipping] pynvml.nvmlDeviceGetPcieReplayCounter
+# [Skipping] pynvml.nvmlDeviceGetDriverModel
+# [Skipping] pynvml.nvmlDeviceGetCurrentDriverModel
+# [Skipping] pynvml.nvmlDeviceGetPendingDriverModel
+# [Skipping] pynvml.nvmlDeviceGetVbiosVersion
+# [Skipping] pynvml.nvmlDeviceGetComputeRunningProcesses
+# [Skipping] pynvml.nvmlDeviceGetGraphicsRunningProcesses
+# [Skipping] pynvml.nvmlDeviceGetAutoBoostedClocksEnabled
 # [Skipping] nvmlUnitSetLedState
-# [Skipping] nvmlDeviceSetPersistenceMode
-# [Skipping] nvmlDeviceSetComputeMode
-# [Skipping] nvmlDeviceSetEccMode
-# [Skipping] nvmlDeviceClearEccErrorCounts
-# [Skipping] nvmlDeviceSetDriverModel
-# [Skipping] nvmlDeviceSetAutoBoostedClocksEnabled
-# [Skipping] nvmlDeviceSetDefaultAutoBoostedClocksEnabled
-# [Skipping] nvmlDeviceSetApplicationsClocks
-# [Skipping] nvmlDeviceResetApplicationsClocks
-# [Skipping] nvmlDeviceSetPowerManagementLimit
-# [Skipping] nvmlDeviceSetGpuOperationMode
+# [Skipping] pynvml.nvmlDeviceSetPersistenceMode
+# [Skipping] pynvml.nvmlDeviceSetComputeMode
+# [Skipping] pynvml.nvmlDeviceSetEccMode
+# [Skipping] pynvml.nvmlDeviceClearEccErrorCounts
+# [Skipping] pynvml.nvmlDeviceSetDriverModel
+# [Skipping] pynvml.nvmlDeviceSetAutoBoostedClocksEnabled
+# [Skipping] pynvml.nvmlDeviceSetDefaultAutoBoostedClocksEnabled
+# [Skipping] pynvml.nvmlDeviceSetApplicationsClocks
+# [Skipping] pynvml.nvmlDeviceResetApplicationsClocks
+# [Skipping] pynvml.nvmlDeviceSetPowerManagementLimit
+# [Skipping] pynvml.nvmlDeviceSetGpuOperationMode
 # [Skipping] nvmlEventSetCreate
-# [Skipping] nvmlDeviceRegisterEvents
-# [Skipping] nvmlDeviceGetSupportedEventTypes
+# [Skipping] pynvml.nvmlDeviceRegisterEvents
+# [Skipping] pynvml.nvmlDeviceGetSupportedEventTypes
 # [Skipping] nvmlEventSetWait
 # [Skipping] nvmlEventSetFree
-# [Skipping] nvmlDeviceOnSameBoard
-# [Skipping] nvmlDeviceGetCurrPcieLinkGeneration
-# [Skipping] nvmlDeviceGetMaxPcieLinkGeneration
-# [Skipping] nvmlDeviceGetCurrPcieLinkWidth
-# [Skipping] nvmlDeviceGetMaxPcieLinkWidth
-# [Skipping] nvmlDeviceGetSupportedClocksThrottleReasons
-# [Skipping] nvmlDeviceGetCurrentClocksThrottleReasons
-# [Skipping] nvmlDeviceGetIndex
-# [Skipping] nvmlDeviceGetAccountingMode
-# [Skipping] nvmlDeviceSetAccountingMode
-# [Skipping] nvmlDeviceClearAccountingPids
-# [Skipping] nvmlDeviceGetAccountingStats
-# [Skipping] nvmlDeviceGetAccountingPids
-# [Skipping] nvmlDeviceGetAccountingBufferSize
-# [Skipping] nvmlDeviceGetRetiredPages
-# [Skipping] nvmlDeviceGetRetiredPagesPendingStatus
-# [Skipping] nvmlDeviceGetAPIRestriction
-# [Skipping] nvmlDeviceSetAPIRestriction
-# [Skipping] nvmlDeviceGetBridgeChipInfo
-# [Skipping] nvmlDeviceGetSamples
-# [Skipping] nvmlDeviceGetViolationStatus
+# [Skipping] pynvml.nvmlDeviceOnSameBoard
+# [Skipping] pynvml.nvmlDeviceGetCurrPcieLinkGeneration
+# [Skipping] pynvml.nvmlDeviceGetMaxPcieLinkGeneration
+# [Skipping] pynvml.nvmlDeviceGetCurrPcieLinkWidth
+# [Skipping] pynvml.nvmlDeviceGetMaxPcieLinkWidth
+# [Skipping] pynvml.nvmlDeviceGetSupportedClocksThrottleReasons
+# [Skipping] pynvml.nvmlDeviceGetCurrentClocksThrottleReasons
+# [Skipping] pynvml.nvmlDeviceGetIndex
+# [Skipping] pynvml.nvmlDeviceGetAccountingMode
+# [Skipping] pynvml.nvmlDeviceSetAccountingMode
+# [Skipping] pynvml.nvmlDeviceClearAccountingPids
+# [Skipping] pynvml.nvmlDeviceGetAccountingStats
+# [Skipping] pynvml.nvmlDeviceGetAccountingPids
+# [Skipping] pynvml.nvmlDeviceGetAccountingBufferSize
+# [Skipping] pynvml.nvmlDeviceGetRetiredPages
+# [Skipping] pynvml.nvmlDeviceGetRetiredPagesPendingStatus
+# [Skipping] pynvml.nvmlDeviceGetAPIRestriction
+# [Skipping] pynvml.nvmlDeviceSetAPIRestriction
+# [Skipping] pynvml.nvmlDeviceGetBridgeChipInfo
+# [Skipping] pynvml.nvmlDeviceGetSamples
+# [Skipping] pynvml.nvmlDeviceGetViolationStatus
 
-# Test nvmlDeviceGetPcieThroughput
-def test_nvmlDeviceGetPcieThroughput(get_gpu_handles):
-    for i in range(pytest.ngpus):
-        tx_bytes_tp = nvmlDeviceGetPcieThroughput( pytest.handles[i], NVML_PCIE_UTIL_TX_BYTES )
-        assert(tx_bytes_tp >= 0)
-        rx_bytes_tp = nvmlDeviceGetPcieThroughput( pytest.handles[i], NVML_PCIE_UTIL_RX_BYTES )
-        assert(rx_bytes_tp >= 0)
-        count_tp = nvmlDeviceGetPcieThroughput( pytest.handles[i], NVML_PCIE_UTIL_COUNT )
-        assert(count_tp >= 0)
+# Test pynvml.nvmlDeviceGetPcieThroughput
+def test_nvmlDeviceGetPcieThroughput(ngpus, handles):
+    for i in range(ngpus):
+        tx_bytes_tp = pynvml.nvmlDeviceGetPcieThroughput( handles[i], NVML_PCIE_UTIL_TX_BYTES )
+        assert tx_bytes_tp >= 0
+        rx_bytes_tp = pynvml.nvmlDeviceGetPcieThroughput( handles[i], NVML_PCIE_UTIL_RX_BYTES )
+        assert rx_bytes_tp >= 0
+        count_tp = pynvml.nvmlDeviceGetPcieThroughput( handles[i], NVML_PCIE_UTIL_COUNT )
+        assert count_tp >= 0
 
-# [Skipping] nvmlSystemGetTopologyGpuSet
-# [Skipping] nvmlDeviceGetTopologyNearestGpus
-# [Skipping] nvmlDeviceGetTopologyCommonAncestor
+# [Skipping] pynvml.nvmlSystemGetTopologyGpuSet
+# [Skipping] pynvml.nvmlDeviceGetTopologyNearestGpus
+# [Skipping] pynvml.nvmlDeviceGetTopologyCommonAncestor

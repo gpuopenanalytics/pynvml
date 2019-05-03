@@ -25,8 +25,8 @@ Usage
 You can use the lower level nvml bindings
 
 ```python
->>> from pynvml.nvml import *
->>> nvml_init()
+>>> from pynvml import *
+>>> nvmlInit()
 >>> print "Driver Version:", nvmlSystemGetDriverVersion()
 Driver Version: 410.00
 >>> deviceCount = nvmlDeviceGetCount()
@@ -36,14 +36,14 @@ Driver Version: 410.00
 ...
 Device 0 : Tesla V100
 
->>> nvml_finalize()
+>>> nvmlShutdown()
 ```
 
 Or the higher level nvidia_smi API
 
 ```python
-from pynvml.smi import *
-nvsmi = nvidia_smi.getInstance()
+import nvidia_smi
+nvsmi = nvidia_smi.nvidia_smi.getInstance()
 nvsmi.DeviceQuery('memory.free, memory.total')
 ```
 
@@ -74,7 +74,7 @@ Each function's use is the same with the following exceptions:
     ```
 
     ```python
-    >>> nvml_init()
+    >>> nvmlInit()
     >>> handle = nvmlDeviceGetHandleByIndex(0)
     >>> (current, pending) = nvmlDeviceGetEccMode(handle)
     ```
@@ -110,7 +110,7 @@ Each function's use is the same with the following exceptions:
 
     ```python
     >>> version = nvmlSystemGetDriverVersion();
-    >>> nvml_finalize()
+    >>> nvmlShutdown()
     ```
 
 For usage information see the NVML documentation.
@@ -153,6 +153,10 @@ Release Notes
     - Added filter parameters on XmlDeviceQuery to match query api in nvidia-smi
     - Added integer enumeration for filter strings to reduce overhead for performance monitoring.
     - Added loop(filter) method with async and callback support
+-   Version 8.0.1
+    - Restructuring directories into two packages (pynvml and nvidia_smi)
+    - Adding initial tests for both packages
+    - Some name-convention cleanup in pynvml
 
 
 Copyright

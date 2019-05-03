@@ -415,7 +415,7 @@ class nvidia_smi:
   @staticmethod
   def __initialize_nvml():
     ''' Initialize NVML bindings. '''
-    nvml_init()
+    nvmlInit()
     deviceCount = nvmlDeviceGetCount()
     handles = {}
     for i in range(0, deviceCount):
@@ -427,7 +427,7 @@ class nvidia_smi:
         del(nvidia_smi.__instance)
         nvidia_smi.__instance = None
         nvidia_smi.__handles = None
-        nvml_finalize()
+        nvmlShutdown()
 
   #
   # Helper functions

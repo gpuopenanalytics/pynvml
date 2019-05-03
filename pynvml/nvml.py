@@ -242,7 +242,7 @@ NVML_VALUE_NOT_AVAILABLE_uint = c_uint(-1)
 
 nvml_lib = None
 lib_load_lock = threading.Lock()
-nvml_lib_refcount = 0 # Incremented on each nvml_init and decremented on nvml_finalize
+nvml_lib_refcount = 0 # Incremented on each nvmlInit and decremented on nvmlShutdown
 
 
 ## ========================================================================== ##
@@ -639,7 +639,7 @@ class c_nvmlAccountingStats_t(PrintableStructure):
 ##                                                                            ##
 ## ========================================================================== ##
 
-def nvml_init():
+def nvmlInit():
     """Initialize NVML.
 
     Uses nvmlInit_v2() from the underlying NVML library.
@@ -695,7 +695,7 @@ def nvml_init():
     lib_load_lock.release()
     return None
 
-def nvml_finalize():
+def nvmlShutdown():
     """Shutdown NVML.
 
     Uses nvmlShutdown() from the underlying NVML library.
