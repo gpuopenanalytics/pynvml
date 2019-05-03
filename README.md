@@ -42,8 +42,8 @@ Device 0 : Tesla V100
 Or the higher level nvidia_smi API
 
 ```python
-import nvidia_smi
-nvsmi = nvidia_smi.nvidia_smi.getInstance()
+from pynvml.smi import nvidia_smi
+nvsmi = nvidia_smi.getInstance()
 nvsmi.DeviceQuery('memory.free, memory.total')
 ```
 
