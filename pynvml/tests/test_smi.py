@@ -1,11 +1,11 @@
-import nvidia_smi
+from pynvml.smi import nvidia_smi
 import pytest
 import os
 
 # Fixture to initialize and finalize nvml
 @pytest.fixture(scope='module')
 def smi(request):
-    return nvidia_smi.nvidia_smi.getInstance()
+    return nvidia_smi.getInstance()
 
 @pytest.fixture
 def ngpus(smi):

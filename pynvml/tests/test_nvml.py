@@ -137,7 +137,7 @@ def test_nvmlDeviceGetPowerUsage(ngpus, handles):
 def test_nvmlDeviceGetMemoryInfo(ngpus, handles):
     for i in range(ngpus):
         meminfo = pynvml.nvmlDeviceGetMemoryInfo( handles[i] )
-        assert (meminfo.used <= meminfo.free) and (meminfo.free <= meminfo.total)
+        assert (meminfo.used <= meminfo.total) and (meminfo.free <= meminfo.total)
 
 # [Skipping] pynvml.nvmlDeviceGetBAR1MemoryInfo
 # [Skipping] pynvml.nvmlDeviceGetComputeMode
