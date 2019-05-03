@@ -15,12 +15,13 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 #    DistributionMetadata.download_url = None
 
 setup(name='pynvml',
-      version='8.0.0',
+      version='8.0.1',
+      python_requires='>=3.6',
       description='Python Bindings for the NVIDIA Management Library',
       long_description=long_description,
       long_description_content_type='text/markdown',
       packages=find_packages(exclude=['notebooks', 'docs', 'tests']),
-      package_data={package_name: ['README.md','help_query_gpu.txt']},
+      package_data={'pynvml': ['README.md','help_query_gpu.txt']},
       license="BSD",
       url="http://www.nvidia.com/",
       author="NVIDIA Corporation",

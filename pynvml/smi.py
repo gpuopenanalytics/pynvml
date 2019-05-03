@@ -28,19 +28,10 @@
 
 """
 nvidia_smi
-nvml_bindings@nvidia.com
 
 Sample code that attempts to reproduce the output of nvidia-smi -q -x
 For many cases the output should match.
 Each query parameter is documented within nvdia-smi --help-query-gpu
-
-Can be used as a library or a command line script
-
-To Run:
-$ python nvidia_smi.py
-$ python nvidia_smi.py "--help"
-$ python nvidia_smi.py "--help_query_gpu"
-$ python nvidia_smi.py "pci.bus_id,memory.total,memory.free"
 
 From Code:
 DeviceQuery()
