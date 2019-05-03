@@ -33,7 +33,7 @@ Driver Version: 410.00
 >>> for i in range(deviceCount):
 ...     handle = nvmlDeviceGetHandleByIndex(i)
 ...     print "Device", i, ":", nvmlDeviceGetName(handle)
-... 
+...
 Device 0 : Tesla V100
 
 >>> nvmlShutdown()
@@ -52,7 +52,7 @@ Functions
 Python methods wrap NVML functions, implemented in a C shared library.
 Each function's use is the same with the following exceptions:
 
-- Instead of returning error codes, failing error codes are raised as 
+- Instead of returning error codes, failing error codes are raised as
   Python exceptions.
 
     ```python
@@ -60,13 +60,13 @@ Each function's use is the same with the following exceptions:
     ...     nvmlDeviceGetCount()
     ... except NVMLError as error:
     ...     print(error)
-    ... 
+    ...
     Uninitialized
     ```
 
 - C function output parameters are returned from the corresponding
   Python function left to right.
-    
+
     ```c
     nvmlReturn_t nvmlDeviceGetEccMode(nvmlDevice_t device,
                                       nvmlEnableState_t *current,
@@ -80,7 +80,7 @@ Each function's use is the same with the following exceptions:
     ```
 
 - C structs are converted into Python classes.
-    
+
     ```c
     nvmlReturn_t DECLDIR nvmlDeviceGetMemoryInfo(nvmlDevice_t device,
                                                  nvmlMemory_t *memory);
@@ -102,7 +102,7 @@ Each function's use is the same with the following exceptions:
     ```
 
 - Python handles string buffer creation.
-    
+
     ```c
     nvmlReturn_t nvmlSystemGetDriverVersion(char* version,
                                             unsigned int length);
@@ -152,7 +152,11 @@ Release Notes
     - Added filter parameters on DeviceQuery to match query api in nvidia-smi
     - Added filter parameters on XmlDeviceQuery to match query api in nvidia-smi
     - Added integer enumeration for filter strings to reduce overhead for performance monitoring.
-    - Added loop(filter) method with async and callback support 
+    - Added loop(filter) method with async and callback support
+-   Version 8.0.1
+    - Restructuring directories into two packages (pynvml and nvidia_smi)
+    - Adding initial tests for both packages
+    - Some name-convention cleanup in pynvml
 
 
 Copyright
