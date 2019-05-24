@@ -250,8 +250,7 @@ NVML_NVLINK_COUNTER_UNIT_PACKETS = 1
 NVML_NVLINK_COUNTER_UNIT_BYTES = 2
 NVML_NVLINK_COUNTER_UNIT_COUNT = 3
 
-_nvmlNvLinkUtilizationControl_t = c_uint
-# Values??
+_nvmlNvLinkUtilizationControl_t = c_int
 
 # C preprocessor defined values
 nvmlFlagDefault             = 0
@@ -678,13 +677,21 @@ class c_nvmlAccountingStats_t(PrintableStructure):
 class c_nvmlPciInfo_t(PrintableStructure):
     _fields_ = [
         ('bus', c_uint),
-        ('busId', c_char),
-        ('busIdLegacy', c_char),
+        ('busId', c_char * 16),
+        ('busIdLegacy', c_char * 16),
         ('device', c_uint),
         ('domain', c_uint),
         ('pciDeviceId', c_uint),
         ('pciSubSystemId', c_uint)
     ]
+    _fmt_ = {
+            'domain'         : "0x%04X",
+            'bus'            : "0x%02X",
+            'device'         : "0x%02X",
+            'pciDeviceId'    : "0x%08X",
+            'pciSubSystemId' : "0x%08X",
+            }
+
 
 ## ========================================================================== ##
 ##                                                                            ##
@@ -1824,6 +1831,10 @@ def nvmlDeviceFreezeNvLinkUtilizationCounter(device, link, counter, freeze):
     """
     Freeze the NVLINK utilization counters. Both the receive and transmit
     counters are operated on by this function.
+
+    Note on the freeze parameter:
+        NVML_FEATURE_ENABLED(1) = freeze the receive and transmit counters
+        NVML_FEATURE_DISABLED(0) = unfreeze the receive and transmit counters
     """
     c_link = c_uint(link)
     c_counter = c_uint(counter)
@@ -1943,18 +1954,19 @@ def nvmlDeviceResetNvLinkUtilizationCounter(device, link, counter):
     ret = fn(device, c_link, c_counter)
     return check_return(ret)
 
-def nvmlDeviceSetNvLinkUtilizationControl(device, link, counter, reset):
+def nvmlDeviceSetNvLinkUtilizationControl(device, link, counter, control, reset):
     """
     Set the NVLINK utilization counter control information for the specified
     counter, 0 or 1. Please refer to nvmlNvLinkUtilizationControl_t for the
     structure definition. Performs a reset of the counters if the reset
     parameter is non-zero.
+
+    Note: nvmlNvLinkUtilizationControl_t is an integer.
     """
     c_link = c_uint(link)
     c_counter = c_uint(counter)
-    c_control = _nvmlNvLinkUtilizationControl_t()
+    c_control = _nvmlNvLinkUtilizationControl_t(control)
     c_reset = c_uint(reset)
     fn = get_func_pointer("nvmlDeviceSetNvLinkUtilizationControl")
     ret = fn(device, c_link, c_counter, byref(c_control), c_reset)
-    check_return(ret)
-    return c_control.value
+    return check_return(ret)

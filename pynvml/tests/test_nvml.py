@@ -78,17 +78,20 @@ def test_nvmlSystemGetDriverVersion(nvml):
 
 # Test pynvml.nvmlDeviceGetHandleBySerial
 def test_nvmlDeviceGetHandleBySerial(ngpus, serials):
-    handles = [ pynvml.nvmlDeviceGetHandleBySerial(serials[i]) for i in range(ngpus) ]
+    handles = [ pynvml.nvmlDeviceGetHandleBySerial(serials[i])
+                for i in range(ngpus) ]
     assert len(handles) == ngpus
 
 # Test pynvml.nvmlDeviceGetHandleByUUID
 def test_nvmlDeviceGetHandleByUUID(ngpus, uuids):
-    handles = [ pynvml.nvmlDeviceGetHandleByUUID(uuids[i]) for i in range(ngpus) ]
+    handles = [ pynvml.nvmlDeviceGetHandleByUUID(uuids[i])
+                for i in range(ngpus) ]
     assert len(handles) == ngpus
 
 # Test pynvml.nvmlDeviceGetHandleByPciBusId
 def test_nvmlDeviceGetHandleByPciBusId(ngpus, pci_info):
-    handles = [ pynvml.nvmlDeviceGetHandleByPciBusId(pci_info[i].busId) for i in range(ngpus) ]
+    handles = [ pynvml.nvmlDeviceGetHandleByPciBusId(pci_info[i].busId)
+                for i in range(ngpus) ]
     assert len(handles) == ngpus
 
 # [Skipping] pynvml.nvmlDeviceGetName
@@ -137,7 +140,8 @@ def test_nvmlDeviceGetPowerUsage(ngpus, handles):
 def test_nvmlDeviceGetMemoryInfo(ngpus, handles):
     for i in range(ngpus):
         meminfo = pynvml.nvmlDeviceGetMemoryInfo( handles[i] )
-        assert (meminfo.used <= meminfo.total) and (meminfo.free <= meminfo.total)
+        assert ((meminfo.used <= meminfo.total)
+                and (meminfo.free <= meminfo.total))
 
 # [Skipping] pynvml.nvmlDeviceGetBAR1MemoryInfo
 # [Skipping] pynvml.nvmlDeviceGetComputeMode
@@ -207,11 +211,18 @@ def test_nvmlDeviceGetUtilizationRates(ngpus, handles):
 # Test pynvml.nvmlDeviceGetPcieThroughput
 def test_nvmlDeviceGetPcieThroughput(ngpus, handles):
     for i in range(ngpus):
-        tx_bytes_tp = pynvml.nvmlDeviceGetPcieThroughput(handles[i], NVML_PCIE_UTIL_TX_BYTES)
+        tx_bytes_tp = pynvml.nvmlDeviceGetPcieThroughput(
+            handles[i],
+            NVML_PCIE_UTIL_TX_BYTES
+        )
         assert tx_bytes_tp >= 0
-        rx_bytes_tp = pynvml.nvmlDeviceGetPcieThroughput(handles[i], NVML_PCIE_UTIL_RX_BYTES)
+        rx_bytes_tp = pynvml.nvmlDeviceGetPcieThroughput(
+            handles[i], NVML_PCIE_UTIL_RX_BYTES
+        )
         assert rx_bytes_tp >= 0
-        count_tp = pynvml.nvmlDeviceGetPcieThroughput(handles[i], NVML_PCIE_UTIL_COUNT)
+        count_tp = pynvml.nvmlDeviceGetPcieThroughput(
+            handles[i], NVML_PCIE_UTIL_COUNT
+        )
         assert count_tp >= 0
 
 # [Skipping] pynvml.nvmlSystemGetTopologyGpuSet
@@ -219,11 +230,17 @@ def test_nvmlDeviceGetPcieThroughput(ngpus, handles):
 # [Skipping] pynvml.nvmlDeviceGetTopologyCommonAncestor
 
 # Test pynvml.nvmlDeviceGetNvLinkVersion
-def test_nvmlDeviceGetNvLinkVersion(ngpus, handles):
+# Test pynvml.nvmlDeviceGetNvLinkState
+# Test pynvml.nvmlDeviceGetNvLinkRemotePciInfo
+def test_nvml_nvlink_properties(ngpus, handles):
     for i in range(ngpus):
         for j in range(pynvml.NVML_NVLINK_MAX_LINKS):
-            version = pynvml.nvmlDeviceGetNvLinkVersion( handles[i], j )
+            version = pynvml.nvmlDeviceGetNvLinkVersion(handles[i], j)
             assert version >= 1
+            state = pynvml.nvmlDeviceGetNvLinkState(handles[i], j)
+            assert state >= 0
+            pci_info = pynvml.nvmlDeviceGetNvLinkRemotePciInfo(handles[i], j)
+            assert isinstance(pci_info, pynvml.c_nvmlPciInfo_t)
 
 # Test pynvml.nvmlDeviceGetNvLinkCapability
 @pytest.mark.parametrize('cap_type', [
@@ -233,22 +250,60 @@ def test_nvmlDeviceGetNvLinkVersion(ngpus, handles):
     pynvml.NVML_NVLINK_CAP_SYSMEM_ATOMICS, # System memory atomics are supported
     pynvml.NVML_NVLINK_CAP_SLI_BRIDGE,     # SLI is supported over this link
     pynvml.NVML_NVLINK_CAP_VALID])         # Link is supported on this device
-def test_nvmlDeviceGetNvLinkCapability(ngpus, handles):
+def test_nvml_nvlink_capability(ngpus, handles, cap_type):
     for i in range(ngpus):
         for j in range(pynvml.NVML_NVLINK_MAX_LINKS):
             cap = pynvml.nvmlDeviceGetNvLinkCapability(handles[i], j, cap_type)
-            #print((i,j,cap))
             assert cap >= 0
 
+# Test pynvml.nvmlDeviceResetNvLinkUtilizationCounter
+# Test pynvml.nvmlDeviceSetNvLinkUtilizationControl
 # Test pynvml.nvmlDeviceGetNvLinkUtilizationCounter
+# Test pynvml.nvmlDeviceGetNvLinkUtilizationControl
+# Test pynvml.nvmlDeviceFreezeNvLinkUtilizationCounter
 @pytest.mark.parametrize('counter', [0, 1])
-def test_nvmlDeviceGetNvLinkUtilizationCounter(ngpus, handles, counter):
+def test_nvml_nvlink_counters(ngpus, handles, counter):
+    control = 1
+    reset = 0
     for i in range(ngpus):
         for j in range(pynvml.NVML_NVLINK_MAX_LINKS):
-            pynvml.nvmlDeviceResetNvLinkUtilizationCounter(device, link, counter)
+            assert pynvml.nvmlDeviceResetNvLinkUtilizationCounter(
+                handles[i], j, counter
+            ) == pynvml.NVML_SUCCESS
+            pynvml.nvmlDeviceSetNvLinkUtilizationControl(
+                handles[i], j, counter, control, reset
+            )
             countdict = pynvml.nvmlDeviceGetNvLinkUtilizationCounter(
                 handles[i], j, counter
             )
-            #print((i,j,countdict['rx'],countdict['tx']))
+            ctl = pynvml.nvmlDeviceGetNvLinkUtilizationControl(
+                handles[i], j, counter
+            )
+            #print((i,j,countdict['rx'],countdict['tx'], ctl))
             assert countdict['rx'] >= 0
             assert countdict['tx'] >= 0
+            assert ctl == control
+            assert pynvml.nvmlDeviceFreezeNvLinkUtilizationCounter(
+                handles[i], j, counter, 1
+            ) == pynvml.NVML_SUCCESS
+            assert pynvml.nvmlDeviceFreezeNvLinkUtilizationCounter(
+                handles[i], j, counter, 0
+            ) == pynvml.NVML_SUCCESS
+
+# Test pynvml.nvmlDeviceResetNvLinkErrorCounters
+# Test pynvml.nvmlDeviceGetNvLinkErrorCounter
+@pytest.mark.parametrize('error_type', [
+    pynvml.NVML_NVLINK_ERROR_DL_REPLAY,
+    pynvml.NVML_NVLINK_ERROR_DL_RECOVERY,
+    pynvml.NVML_NVLINK_ERROR_DL_CRC_FLIT,
+    pynvml.NVML_NVLINK_ERROR_DL_CRC_DATA])
+def test_nvml_nvlink_error_counters(ngpus, handles, error_type):
+    for i in range(ngpus):
+        for j in range(pynvml.NVML_NVLINK_MAX_LINKS):
+            assert pynvml.nvmlDeviceResetNvLinkErrorCounters(
+                handles[i], j
+            ) == pynvml.NVML_SUCCESS
+            error_count = pynvml.nvmlDeviceGetNvLinkErrorCounter(
+                handles[i], j, error_type
+            )
+            assert error_count >= 0
