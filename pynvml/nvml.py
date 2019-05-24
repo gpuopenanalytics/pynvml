@@ -1828,13 +1828,19 @@ def nvmlDeviceGetTopologyCommonAncestor(device1, device2):
     return c_level.value
 
 def nvmlDeviceFreezeNvLinkUtilizationCounter(device, link, counter, freeze):
-    """
+    """Freeze the NVLINK utilization counters.
+
     Freeze the NVLINK utilization counters. Both the receive and transmit
     counters are operated on by this function.
 
-    Note on the freeze parameter:
-        NVML_FEATURE_ENABLED(1) = freeze the receive and transmit counters
-        NVML_FEATURE_DISABLED(0) = unfreeze the receive and transmit counters
+    Args:
+        device: The identifier of the target device
+
+        link: Specifies the NvLink link to be queried (uint)
+
+        freeze: NVML_FEATURE_ENABLED(1) = freeze the rx and tx counters
+                NVML_FEATURE_DISABLED(0) = unfreeze the rx and tx counters
+
     """
     c_link = c_uint(link)
     c_counter = c_uint(counter)
@@ -1843,11 +1849,24 @@ def nvmlDeviceFreezeNvLinkUtilizationCounter(device, link, counter, freeze):
     return check_return(ret)
 
 def nvmlDeviceGetNvLinkCapability(device, link, cap):
-    """
+    """Retrieve the capability of a specified NvLinklink.
+
     Retrieves the requested capability from the device's NvLink for the link
     specified. Please refer to the nvmlNvLinkCapability_t structure for the
     specific caps that can be queried. The return value should be treated as a
     boolean.
+
+    Args:
+        device: The identifier of the target device
+
+        link: Specifies the NvLink link to be queried (uint)
+
+        capability: Specifies the nvmlNvLinkCapability_t to be queried
+
+    Returns:
+        cap_result: A boolean for the queried capability indicating that feature
+        is available
+
     """
     c_link = c_uint(link)
     c_cap_result = c_bool()
@@ -1857,9 +1876,21 @@ def nvmlDeviceGetNvLinkCapability(device, link, cap):
     return c_cap_result.value
 
 def nvmlDeviceGetNvLinkErrorCounter(device, link, counter):
-    """
+    """Retrieve the specified error counter value.
+
     Retrieves the specified error counter value. Please refer to
     _nvmlNvLinkErrorCounter_t for error counters that are available.
+
+    Args:
+        device: The identifier of the target device
+
+        link: Specifies the NvLink link to be queried (uint)
+
+        counter: Specifies the NvLink counter to be queried
+
+    Returns:
+        value: The specified counter value
+
     """
     c_link = c_uint(link)
     c_cap_result = c_bool()
@@ -1870,9 +1901,19 @@ def nvmlDeviceGetNvLinkErrorCounter(device, link, counter):
     return c_value.value
 
 def nvmlDeviceGetNvLinkRemotePciInfo(device, link):
-    """
+    """Retrieve the PCI information for the remote node on a NvLink link.
+
     Retrieves the PCI information for the remote node on a NvLink link. Note:
     pciSubSystemId is not filled in this function and is indeterminate.
+
+    Args:
+        device: The identifier of the target device
+
+        link: Specifies the NvLink link to be queried (uint)
+
+    Returns:
+        pci: nvmlPciInfo_t of the remote node for the specified link
+
     """
     c_link = c_uint(link)
     c_pci = c_nvmlPciInfo_t()
@@ -1882,8 +1923,19 @@ def nvmlDeviceGetNvLinkRemotePciInfo(device, link):
     return c_pci
 
 def nvmlDeviceGetNvLinkState(device, link):
-    """
+    """Retrieve the state of the device's NvLink for the link specified.
+
     Retrieves the state of the device's NvLink for the link specified.
+
+    Args:
+        device: The identifier of the target device
+
+        link: Specifies the NvLink link to be queried (uint)
+
+    Returns:
+        mode: nvmlEnableState_t where NVML_FEATURE_ENABLED indicates that the
+        link is active and NVML_FEATURE_DISABLED indicates it is inactive.
+
     """
     c_link = c_uint(link)
     c_mode = _nvmlEnableState_t()
@@ -1893,10 +1945,22 @@ def nvmlDeviceGetNvLinkState(device, link):
     return c_mode.value
 
 def nvmlDeviceGetNvLinkUtilizationControl(device, link, counter):
-    """
+    """Get NVLINK utilization counter control information
+
     Get the NVLINK utilization counter control information for the specified
     counter, 0 or 1. Please refer to nvmlNvLinkUtilizationControl_t for the
     structure definition. [Note: nvmlNvLinkUtilizationControl_t not documented]
+
+    Args:
+        device: The identifier of the target device
+
+        link: Specifies the NvLink link to be queried (uint)
+
+        counter: Specifies the counter that should be set (0 or 1)
+
+    Returns:
+        control: The nvmlNvLinkUtilizationControl_t object (an integer)
+
     """
     c_link = c_uint(link)
     c_counter = c_uint(counter)
@@ -1907,11 +1971,24 @@ def nvmlDeviceGetNvLinkUtilizationControl(device, link, counter):
     return c_control.value
 
 def nvmlDeviceGetNvLinkUtilizationCounter(device, link, counter):
-    """
+    """Retrieve an NVLINK utilization counter.
+
     Retrieve the NVLINK utilization counter based on the current control for a
     specified counter. In general it is good practice to use
     nvmlDeviceSetNvLinkUtilizationControl before reading the utilization
     counters as they have no default state.
+
+    Args:
+        device: The identifier of the target device
+
+        link: Specifies the NvLink link to be queried (uint)
+
+        counter: Specifies the counter that should be set (0 or 1)
+
+    Returns:
+        rxtx_dict: Dictionary with `rx` key (value is "receive" counter) and
+        `tx` key (value is "transmit" counter)
+
     """
     c_link = c_uint(link)
     c_counter = c_uint(counter)
@@ -1920,11 +1997,22 @@ def nvmlDeviceGetNvLinkUtilizationCounter(device, link, counter):
     fn = get_func_pointer("nvmlDeviceGetNvLinkUtilizationCounter")
     ret = fn(device, c_link, c_counter, byref(c_rx), byref(c_tx))
     check_return(ret)
-    return {'rx': c_rx.value, 'tx': c_rx.value}
+    rxtx_dict = {'rx': c_rx.value, 'tx': c_rx.value}
+    return rxtx_dict
 
 def nvmlDeviceGetNvLinkVersion(device, link):
-    """
+    """Retrieve NvLink version.
+
     Retrieves the version of the device's NvLink for the link specified.
+
+    Args:
+        device: The identifier of the target device
+
+        link: Specifies the NvLink link to be queried (uint)
+
+    Returns:
+        version: Requested NvLink version (uint)
+
     """
     c_link = c_uint(link)
     c_version = c_uint()
@@ -1934,9 +2022,16 @@ def nvmlDeviceGetNvLinkVersion(device, link):
     return c_version.value
 
 def nvmlDeviceResetNvLinkErrorCounters(device, link):
-    """
-    Resets all error counters to zero Please refer to nvmlNvLinkErrorCounter_t
+    """Reset all error counters to zero.
+
+    Resets all error counters to zero. Please refer to nvmlNvLinkErrorCounter_t
     for the list of error counters that are reset.
+
+    Args:
+        device: The identifier of the target device
+
+        link: Specifies the NvLink link to be queried (uint)
+
     """
     c_link = c_uint(link)
     fn = get_func_pointer("nvmlDeviceResetNvLinkErrorCounters")
@@ -1944,9 +2039,18 @@ def nvmlDeviceResetNvLinkErrorCounters(device, link):
     return check_return(ret)
 
 def nvmlDeviceResetNvLinkUtilizationCounter(device, link, counter):
-    """
-    Reset the NVLINK utilization counters Both the receive and transmit
+    """Reset the NVLINK utilization counters.
+
+    Reset the NVLINK utilization counters. Both the receive and transmit
     counters are operated on by this function.
+
+    Args:
+        device: The identifier of the target device
+
+        link: Specifies the NvLink link to be queried (uint)
+
+        counter: Specifies the counter that should be reset (0 or 1)
+
     """
     c_link = c_uint(link)
     c_counter = c_uint(counter)
@@ -1955,13 +2059,25 @@ def nvmlDeviceResetNvLinkUtilizationCounter(device, link, counter):
     return check_return(ret)
 
 def nvmlDeviceSetNvLinkUtilizationControl(device, link, counter, control, reset):
-    """
+    """Set the NVLINK utilization counter control.
+
     Set the NVLINK utilization counter control information for the specified
     counter, 0 or 1. Please refer to nvmlNvLinkUtilizationControl_t for the
     structure definition. Performs a reset of the counters if the reset
-    parameter is non-zero.
+    parameter is non-zero. Note: nvmlNvLinkUtilizationControl_t is an integer.
 
-    Note: nvmlNvLinkUtilizationControl_t is an integer.
+    Args:
+        device: The identifier of the target device
+
+        link: Specifies the NvLink link to be queried (uint)
+
+        counter: Specifies the counter that should be set (0 or 1)
+
+        reset: Resets the counters on set if non-zero (uint)
+
+    Returns:
+        control: The nvmlNvLinkUtilizationControl_t control setting
+
     """
     c_link = c_uint(link)
     c_counter = c_uint(counter)
