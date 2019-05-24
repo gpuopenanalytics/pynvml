@@ -217,6 +217,39 @@ NVML_TOPOLOGY_HOSTBRIDGE = 30
 NVML_TOPOLOGY_CPU = 40
 NVML_TOPOLOGY_SYSTEM = 50
 
+_nvmlNvLinkCapability_t = c_uint
+NVML_NVLINK_CAP_P2P_SUPPORTED = 0
+NVML_NVLINK_CAP_SYSMEM_ACCESS = 1
+NVML_NVLINK_CAP_P2P_ATOMICS = 2
+NVML_NVLINK_CAP_SYSMEM_ATOMICS = 3
+NVML_NVLINK_CAP_SLI_BRIDGE = 4
+NVML_NVLINK_CAP_VALID = 5
+NVML_NVLINK_CAP_COUNT = 6
+
+_nvmlNvLinkErrorCounter_t = c_uint
+NVML_NVLINK_ERROR_DL_REPLAY = 0
+NVML_NVLINK_ERROR_DL_RECOVERY = 1
+NVML_NVLINK_ERROR_DL_CRC_FLIT = 2
+NVML_NVLINK_ERROR_DL_CRC_DATA = 3
+NVML_NVLINK_ERROR_COUNT = 4
+
+_nvmlNvLinkUtilizationCountPktTypes_t = c_uint
+NVML_NVLINK_COUNTER_PKTFILTER_NOP = 0x1
+NVML_NVLINK_COUNTER_PKTFILTER_READ = 0x2
+NVML_NVLINK_COUNTER_PKTFILTER_WRITE = 0x4
+NVML_NVLINK_COUNTER_PKTFILTER_RATOM = 0x8
+NVML_NVLINK_COUNTER_PKTFILTER_NRATOM = 0x10
+NVML_NVLINK_COUNTER_PKTFILTER_FLUSH = 0x20
+NVML_NVLINK_COUNTER_PKTFILTER_RESPDATA = 0x40
+NVML_NVLINK_COUNTER_PKTFILTER_RESPNODATA = 0x80
+NVML_NVLINK_COUNTER_PKTFILTER_ALL = 0xFF
+
+_nvmlNvLinkUtilizationCountUnits_t = c_uint
+NVML_NVLINK_COUNTER_UNIT_CYCLES = 0
+NVML_NVLINK_COUNTER_UNIT_PACKETS = 1
+NVML_NVLINK_COUNTER_UNIT_BYTES = 2
+NVML_NVLINK_COUNTER_UNIT_COUNT = 3
+
 # C preprocessor defined values
 nvmlFlagDefault             = 0
 nvmlFlagForce               = 1
@@ -229,7 +262,11 @@ NVML_SYSTEM_NVML_VERSION_BUFFER_SIZE         = 80
 NVML_DEVICE_NAME_BUFFER_SIZE                 = 64
 NVML_DEVICE_SERIAL_BUFFER_SIZE               = 30
 NVML_DEVICE_VBIOS_VERSION_BUFFER_SIZE        = 32
-NVML_DEVICE_PCI_BUS_ID_BUFFER_SIZE           = 16
+NVML_DEVICE_PCI_BUS_ID_BUFFER_SIZE           = 32
+NVML_DEVICE_PCI_BUS_ID_BUFFER_V2_SIZE        = 16
+
+# NvLink
+NVML_NVLINK_MAX_LINKS = 6
 
 NVML_VALUE_NOT_AVAILABLE_ulonglong = c_ulonglong(-1)
 NVML_VALUE_NOT_AVAILABLE_uint = c_uint(-1)
@@ -577,6 +614,8 @@ class c_nvmlViolationTime_t(PrintableStructure):
         ('violationTime', c_ulonglong),
     ]
 
+
+
 ## Event structures
 class struct_c_nvmlEventSet_t(Structure):
     pass # opaque handle
@@ -631,6 +670,17 @@ class c_nvmlAccountingStats_t(PrintableStructure):
         ('startTime', c_ulonglong),
         ('isRunning', c_uint),
         ('reserved', c_uint * 5)
+    ]
+
+class c_nvmlPciInfo_t(PrintableStructure):
+    _fields_ = [
+        ('bus', c_uint),
+        ('busId', c_char),
+        ('busIdLegacy', c_char),
+        ('device', c_uint),
+        ('domain', c_uint),
+        ('pciDeviceId', c_uint),
+        ('pciSubSystemId', c_uint)
     ]
 
 ## ========================================================================== ##
@@ -1766,3 +1816,91 @@ def nvmlDeviceGetTopologyCommonAncestor(device1, device2):
     ret = fn(device1, device2, byref(c_level))
     check_return(ret)
     return c_level.value
+
+def nvmlDeviceFreezeNvLinkUtilizationCounter(device, link, counter, freeze):
+    """
+    Freeze the NVLINK utilization counters. Both the receive and transmit
+    counters are operated on by this function.
+    """
+    c_link = c_uint(link)
+    c_counter = c_uint(counter)
+    fn = get_func_pointer("nvmlDeviceFreezeNvLinkUtilizationCounter")
+    ret = fn(device, c_link, c_counter, _nvmlEnableState_t(freeze))
+    return check_return(ret)
+
+def nvmlDeviceGetNvLinkCapability(device, link, cap):
+    """
+    Retrieves the requested capability from the device's NvLink for the link
+    specified. Please refer to the nvmlNvLinkCapability_t structure for the
+    specific caps that can be queried. The return value should be treated as a
+    boolean.
+    """
+    c_link = c_uint(link)
+    c_cap_result = c_bool()
+    fn = get_func_pointer("nvmlDeviceGetNvLinkCapability")
+    ret = fn(device, c_link, _nvmlNvLinkCapability_t(cap), byref(c_cap_result))
+    check_return(ret)
+    return c_cap_result.value
+
+def nvmlDeviceGetNvLinkErrorCounter(device, link, counter):
+    """
+    Retrieves the specified error counter value. Please refer to
+    _nvmlNvLinkErrorCounter_t for error counters that are available.
+    """
+    c_link = c_uint(link)
+    c_cap_result = c_bool()
+    c_value = c_ulonglong()
+    fn = get_func_pointer("nvmlDeviceGetNvLinkErrorCounter")
+    ret = fn(device, c_link, _nvmlNvLinkErrorCounter_t(counter), byref(c_value))
+    check_return(ret)
+    return c_value.value
+
+def nvmlDeviceGetNvLinkRemotePciInfo(device, link):
+    """
+    Retrieves the PCI information for the remote node on a NvLink link. Note:
+    pciSubSystemId is not filled in this function and is indeterminate.
+    """
+    c_link = c_uint(link)
+    c_pci = c_nvmlPciInfo_t()
+    fn = get_func_pointer("nvmlDeviceGetNvLinkRemotePciInfo")
+    ret = fn(device, c_link, byref(c_pci))
+    check_return(ret)
+    return c_pci
+
+def nvmlDeviceGetNvLinkState(device, link):
+    """
+    Retrieves the state of the device's NvLink for the link specified.
+    """
+    c_link = c_uint(link)
+    c_mode = _nvmlEnableState_t()
+    fn = get_func_pointer("nvmlDeviceGetNvLinkState")
+    ret = fn(device, c_link, byref(c_mode))
+    check_return(ret)
+    return c_mode.value
+
+
+
+def nvmlDeviceGetNvLinkVersion(device, link):
+    c_link = c_uint(link)
+    c_version = c_uint()
+    fn = get_func_pointer("nvmlDeviceGetNvLinkVersion")
+    ret = fn(device, c_link, byref(c_version))
+    check_return(ret)
+    return c_version.value
+
+def nvmlDeviceGetNvLinkUtilizationCounter(device, link, counter):
+    c_link = c_uint(link)
+    c_counter = c_uint(counter)
+    c_rx = c_ulonglong()
+    c_tx = c_ulonglong()
+    fn = get_func_pointer("nvmlDeviceGetNvLinkUtilizationCounter")
+    ret = fn(device, c_link, c_counter, byref(c_rx), byref(c_tx))
+    check_return(ret)
+    return {'rx': c_rx.value, 'tx': c_rx.value}
+
+def nvmlDeviceResetNvLinkUtilizationCounter(device, link, counter):
+    c_link = c_uint(link)
+    c_counter = c_uint(counter)
+    fn = get_func_pointer("nvmlDeviceResetNvLinkUtilizationCounter")
+    ret = fn(device, c_link, c_counter)
+    return check_return(ret)
