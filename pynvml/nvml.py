@@ -250,6 +250,9 @@ NVML_NVLINK_COUNTER_UNIT_PACKETS = 1
 NVML_NVLINK_COUNTER_UNIT_BYTES = 2
 NVML_NVLINK_COUNTER_UNIT_COUNT = 3
 
+_nvmlNvLinkUtilizationControl_t = c_uint
+# Values??
+
 # C preprocessor defined values
 nvmlFlagDefault             = 0
 nvmlFlagForce               = 1
@@ -1878,17 +1881,27 @@ def nvmlDeviceGetNvLinkState(device, link):
     check_return(ret)
     return c_mode.value
 
-
-
-def nvmlDeviceGetNvLinkVersion(device, link):
+def nvmlDeviceGetNvLinkUtilizationControl(device, link, counter):
+    """
+    Get the NVLINK utilization counter control information for the specified
+    counter, 0 or 1. Please refer to nvmlNvLinkUtilizationControl_t for the
+    structure definition. [Note: nvmlNvLinkUtilizationControl_t not documented]
+    """
     c_link = c_uint(link)
-    c_version = c_uint()
-    fn = get_func_pointer("nvmlDeviceGetNvLinkVersion")
-    ret = fn(device, c_link, byref(c_version))
+    c_counter = c_uint(counter)
+    c_control = _nvmlNvLinkUtilizationControl_t()
+    fn = get_func_pointer("nvmlDeviceGetNvLinkUtilizationControl")
+    ret = fn(device, c_link, c_counter, byref(c_control))
     check_return(ret)
-    return c_version.value
+    return c_control.value
 
 def nvmlDeviceGetNvLinkUtilizationCounter(device, link, counter):
+    """
+    Retrieve the NVLINK utilization counter based on the current control for a
+    specified counter. In general it is good practice to use
+    nvmlDeviceSetNvLinkUtilizationControl before reading the utilization
+    counters as they have no default state.
+    """
     c_link = c_uint(link)
     c_counter = c_uint(counter)
     c_rx = c_ulonglong()
@@ -1898,9 +1911,50 @@ def nvmlDeviceGetNvLinkUtilizationCounter(device, link, counter):
     check_return(ret)
     return {'rx': c_rx.value, 'tx': c_rx.value}
 
+def nvmlDeviceGetNvLinkVersion(device, link):
+    """
+    Retrieves the version of the device's NvLink for the link specified.
+    """
+    c_link = c_uint(link)
+    c_version = c_uint()
+    fn = get_func_pointer("nvmlDeviceGetNvLinkVersion")
+    ret = fn(device, c_link, byref(c_version))
+    check_return(ret)
+    return c_version.value
+
+def nvmlDeviceResetNvLinkErrorCounters(device, link):
+    """
+    Resets all error counters to zero Please refer to nvmlNvLinkErrorCounter_t
+    for the list of error counters that are reset.
+    """
+    c_link = c_uint(link)
+    fn = get_func_pointer("nvmlDeviceResetNvLinkErrorCounters")
+    ret = fn(device, c_link)
+    return check_return(ret)
+
 def nvmlDeviceResetNvLinkUtilizationCounter(device, link, counter):
+    """
+    Reset the NVLINK utilization counters Both the receive and transmit
+    counters are operated on by this function.
+    """
     c_link = c_uint(link)
     c_counter = c_uint(counter)
     fn = get_func_pointer("nvmlDeviceResetNvLinkUtilizationCounter")
     ret = fn(device, c_link, c_counter)
     return check_return(ret)
+
+def nvmlDeviceSetNvLinkUtilizationControl(device, link, counter, reset):
+    """
+    Set the NVLINK utilization counter control information for the specified
+    counter, 0 or 1. Please refer to nvmlNvLinkUtilizationControl_t for the
+    structure definition. Performs a reset of the counters if the reset
+    parameter is non-zero.
+    """
+    c_link = c_uint(link)
+    c_counter = c_uint(counter)
+    c_control = _nvmlNvLinkUtilizationControl_t()
+    c_reset = c_uint(reset)
+    fn = get_func_pointer("nvmlDeviceSetNvLinkUtilizationControl")
+    ret = fn(device, c_link, c_counter, byref(c_control), c_reset)
+    check_return(ret)
+    return c_control.value
