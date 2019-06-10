@@ -2075,8 +2075,8 @@ def nvmlDeviceSetNvLinkUtilizationControl(device, link, counter, control, reset)
 
         reset: Resets the counters on set if non-zero (uint)
 
-    Returns:
         control: The nvmlNvLinkUtilizationControl_t control setting
+                 Note: 0 == cycles, 1 == packets, 2 == bytes
 
     """
     c_link = c_uint(link)

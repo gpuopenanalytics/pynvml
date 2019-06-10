@@ -262,8 +262,8 @@ def test_nvml_nvlink_capability(ngpus, handles, cap_type):
 # Test pynvml.nvmlDeviceGetNvLinkUtilizationControl
 # Test pynvml.nvmlDeviceFreezeNvLinkUtilizationCounter
 @pytest.mark.parametrize('counter', [0, 1])
-def test_nvml_nvlink_counters(ngpus, handles, counter):
-    control = 1
+@pytest.mark.parametrize('control', [0, 1, 2])
+def test_nvml_nvlink_counters(ngpus, handles, counter, control):
     reset = 0
     for i in range(ngpus):
         for j in range(pynvml.NVML_NVLINK_MAX_LINKS):
@@ -279,7 +279,6 @@ def test_nvml_nvlink_counters(ngpus, handles, counter):
             ctl = pynvml.nvmlDeviceGetNvLinkUtilizationControl(
                 handles[i], j, counter
             )
-            #print((i,j,countdict['rx'],countdict['tx'], ctl))
             assert countdict['rx'] >= 0
             assert countdict['tx'] >= 0
             assert ctl == control
