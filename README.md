@@ -157,6 +157,8 @@ Release Notes
     - Restructuring directories into two packages (pynvml and nvidia_smi)
     - Adding initial tests for both packages
     - Some name-convention cleanup in pynvml
+-   Version 8.0.2
+    - Added NVLink function wrappers for pynvml module
 
 
 Copyright
