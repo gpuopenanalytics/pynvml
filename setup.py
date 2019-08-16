@@ -15,7 +15,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 #    DistributionMetadata.download_url = None
 
 setup(name='pynvml',
-      version='8.0.1',
+      version='8.0.2',
       python_requires='>=3.6',
       description='Python Bindings for the NVIDIA Management Library',
       long_description=long_description,
