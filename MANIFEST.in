@@ -1,2 +1,2 @@
 include versioneer.py
-include pynvml/*.py
+include pynvml/_version.py
