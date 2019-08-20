@@ -2,6 +2,8 @@ from setuptools import setup, find_packages
 from os import path
 from io import open
 
+import versioneer
+
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
@@ -15,7 +17,8 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 #    DistributionMetadata.download_url = None
 
 setup(name='pynvml',
-      version='8.0.2',
+      version=versioneer.get_version(),
+      cmdclass=versioneer.get_cmdclass(),
       python_requires='>=3.6',
       description='Python Bindings for the NVIDIA Management Library',
       long_description=long_description,
