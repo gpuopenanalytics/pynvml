@@ -1997,7 +1997,7 @@ def nvmlDeviceGetNvLinkUtilizationCounter(device, link, counter):
     fn = get_func_pointer("nvmlDeviceGetNvLinkUtilizationCounter")
     ret = fn(device, c_link, c_counter, byref(c_rx), byref(c_tx))
     check_return(ret)
-    rxtx_dict = {'rx': c_rx.value, 'tx': c_rx.value}
+    rxtx_dict = {'rx': c_rx.value, 'tx': c_tx.value}
     return rxtx_dict
 
 def nvmlDeviceGetNvLinkVersion(device, link):
