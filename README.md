@@ -159,6 +159,9 @@ Release Notes
     - Some name-convention cleanup in pynvml
 -   Version 8.0.2
     - Added NVLink function wrappers for pynvml module
+-   Version 8.0.3
+    - Added versioneer
+    - Fixed nvmlDeviceGetNvLinkUtilizationCounter bug
 
 
 Copyright
