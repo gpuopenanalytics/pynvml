@@ -1245,6 +1245,13 @@ def nvmlDeviceGetPowerUsage(handle):
     check_return(ret)
     return c_watts.value
 
+def nvmlDeviceGetTotalEnergyConsumption(handle):
+    c_mJoules = c_uint()
+    fn = get_func_pointer("nvmlDeviceGetTotalEnergyConsumption")
+    ret = fn(handle, byref(c_mJoules))
+    check_return(ret)
+    return c_mJoules.value
+
 # Added in 4.304
 def nvmlDeviceGetGpuOperationMode(handle):
     c_currState = _nvmlGpuOperationMode_t()
