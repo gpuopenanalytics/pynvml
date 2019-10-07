@@ -1,5 +1,6 @@
 import pynvml
 import pytest
+import time
 import os
 
 NVML_PCIE_UTIL_TX_BYTES = pynvml.NVML_PCIE_UTIL_TX_BYTES
@@ -131,6 +132,21 @@ def test_nvmlDeviceGetPowerUsage(ngpus, handles):
     for i in range(ngpus):
         power_watts = pynvml.nvmlDeviceGetPowerUsage( handles[i] )
         assert power_watts >= 0.0
+
+# Test pynvml.nvmlDeviceGetTotalEnergyConsumption
+def test_nvmlDeviceGetTotalEnergyConsumption(ngpus, handles):
+    for i in range(ngpus):
+        energy_mJoules1 = pynvml.nvmlDeviceGetTotalEnergyConsumption(
+            handles[i])
+        for j in range(10):  # idle for 150 ms
+            time.sleep(0.015)  # and check for increase every 15 ms
+            energy_mJoules2 = pynvml.nvmlDeviceGetTotalEnergyConsumption(
+                handles[i])
+            assert energy_mJoules2 >= energy_mJoules1
+            if energy_mJoules2 > energy_mJoules1:
+                break
+        else:
+            assert False, "energy did not increase across 150 ms interval"
 
 # [Skipping] pynvml.nvmlDeviceGetGpuOperationMode
 # [Skipping] pynvml.nvmlDeviceGetCurrentGpuOperationMode
