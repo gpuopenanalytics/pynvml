@@ -1239,11 +1239,11 @@ def nvmlDeviceGetEnforcedPowerLimit(handle):
     return c_limit.value
 
 def nvmlDeviceGetPowerUsage(handle):
-    c_watts = c_uint()
+    c_mWatts = c_uint()
     fn = get_func_pointer("nvmlDeviceGetPowerUsage")
-    ret = fn(handle, byref(c_watts))
+    ret = fn(handle, byref(c_mWatts))
     check_return(ret)
-    return c_watts.value
+    return c_mWatts.value
 
 def nvmlDeviceGetTotalEnergyConsumption(handle):
     c_mJoules = c_uint()

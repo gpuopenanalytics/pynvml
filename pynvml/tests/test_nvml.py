@@ -130,8 +130,8 @@ def test_nvmlDeviceGetHandleByPciBusId(ngpus, pci_info):
 # Test pynvml.nvmlDeviceGetPowerUsage
 def test_nvmlDeviceGetPowerUsage(ngpus, handles):
     for i in range(ngpus):
-        power_watts = pynvml.nvmlDeviceGetPowerUsage( handles[i] )
-        assert power_watts >= 0.0
+        power_mWatts = pynvml.nvmlDeviceGetPowerUsage(handles[i])
+        assert power_mWatts >= 0.0
 
 # Test pynvml.nvmlDeviceGetTotalEnergyConsumption
 def test_nvmlDeviceGetTotalEnergyConsumption(ngpus, handles):
