@@ -122,6 +122,27 @@ All meaningful NVML constants and enums are exposed in Python.
 
 The NVML_VALUE_NOT_AVAILABLE constant is not used.  Instead None is mapped to the field.
 
+NVML Permissions
+----------------
+
+Many of the `pynvml` wrappers assume that the underlying NVIDIA Management Library (NVML) API can be used without admin/root privileges.  However, it is certainly possible for the system permissions to prevent pynvml from querying GPU performance counters. For example:
+
+```
+$ nvidia-smi nvlink -g 0
+GPU 0: Tesla V100-SXM2-32GB (UUID: GPU-96ab329d-7a1f-73a8-a9b7-18b4b2855f92)
+NVML: Unable to get the NvLink link utilization counter control for link 0: Insufficient Permissions
+```
+
+A simple way to check the permissions status is to look for `RmProfilingAdminOnly` in the driver `params` file (Note that `RmProfilingAdminOnly == 1` means that admin/sudo access is required):
+
+```
+$ cat /proc/driver/nvidia/params | grep RmProfilingAdminOnly
+RmProfilingAdminOnly: 1
+```
+
+For more information on setting/unsetting the relevant admin privileges, see [these notes](https://developer.nvidia.com/nvidia-development-tools-solutions-ERR_NVGPUCTRPERM-permission-issue-performance-counters) on resolving `ERR_NVGPUCTRPERM` errors.
+
+
 Release Notes
 -------------
 
