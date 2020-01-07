@@ -55,9 +55,10 @@ def pci_info(ngpus, handles):
 # Test pynvml.nvmlSystemGetNVMLVersion
 def test_nvmlSystemGetNVMLVersion(nvml):
     vsn = 0.0
-    vsn = float(pynvml.nvmlSystemGetDriverVersion().decode())
-    print('[NVML Version: '+str(vsn)+']', end =' ')
-    assert vsn > 0.0
+    vsn = pynvml.nvmlSystemGetNVMLVersion().decode()
+    print('[NVML Version: '+vsn+']', end =' ')
+    #Check if the major version number is greater than 0
+    assert int(vsn.split('.')[0]) > 0.0
 
 # Test pynvml.nvmlSystemGetProcessName
 def test_nvmlSystemGetProcessName(nvml):
@@ -69,9 +70,10 @@ def test_nvmlSystemGetProcessName(nvml):
 # Test pynvml.nvmlSystemGetDriverVersion
 def test_nvmlSystemGetDriverVersion(nvml):
     vsn = 0.0
-    vsn = float(pynvml.nvmlSystemGetDriverVersion().decode())
-    print('[Driver Version: '+str(vsn)+']', end =' ')
-    assert vsn > 0.0 # Developing with 396.44
+    vsn = pynvml.nvmlSystemGetDriverVersion().decode()
+    print('[Driver Version: '+vsn+']', end =' ')
+    #Check if the major version number is greater than 0
+    assert int(vsn.split('.')[0]) > 0.0 # Developing with 396.44
 
 ## Unit "Get" Functions (Skipping for now) ##
 
