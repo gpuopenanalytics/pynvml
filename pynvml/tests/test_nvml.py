@@ -2,6 +2,7 @@ import pynvml
 import pytest
 import time
 import os
+from distutils.version import LooseVersion
 
 NVML_PCIE_UTIL_TX_BYTES = pynvml.NVML_PCIE_UTIL_TX_BYTES
 NVML_PCIE_UTIL_RX_BYTES = pynvml.NVML_PCIE_UTIL_RX_BYTES
@@ -57,8 +58,7 @@ def test_nvmlSystemGetNVMLVersion(nvml):
     vsn = 0.0
     vsn = pynvml.nvmlSystemGetNVMLVersion().decode()
     print('[NVML Version: '+vsn+']', end =' ')
-    #Check if the major version number is greater than 0
-    assert int(vsn.split('.')[0]) > 0.0
+    assert vsn > LooseVersion("0.0")
 
 # Test pynvml.nvmlSystemGetProcessName
 def test_nvmlSystemGetProcessName(nvml):
@@ -72,8 +72,7 @@ def test_nvmlSystemGetDriverVersion(nvml):
     vsn = 0.0
     vsn = pynvml.nvmlSystemGetDriverVersion().decode()
     print('[Driver Version: '+vsn+']', end =' ')
-    #Check if the major version number is greater than 0
-    assert int(vsn.split('.')[0]) > 0.0 # Developing with 396.44
+    assert vsn > LooseVersion("0.0") # Developing with 396.44
 
 ## Unit "Get" Functions (Skipping for now) ##
 
