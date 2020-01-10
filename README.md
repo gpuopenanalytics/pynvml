@@ -183,6 +183,10 @@ Release Notes
 -   Version 8.0.3
     - Added versioneer
     - Fixed nvmlDeviceGetNvLinkUtilizationCounter bug
+-   Version 8.0.4
+    - Added nvmlDeviceGetTotalEnergyConsumption
+    - Added notes about NVML permissions
+    - Fixed version-check testing
 
 
 Copyright
