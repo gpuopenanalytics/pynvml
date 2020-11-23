@@ -43,10 +43,135 @@ import string
 ##                                                                            ##
 ## ========================================================================== ##
 
+NVML_API_VERSION      = 11
+NVML_API_VERSION_STR  = "11"
+
 ## Enums
+_nvmlBridgeChipType_t = c_uint
+NVML_BRIDGE_CHIP_PLX = 0
+NVML_BRIDGE_CHIP_BRO4 = 1
+NVML_MAX_PHYSICAL_BRIDGE = 128
+
+NVML_VALUE_NOT_AVAILABLE_ulonglong = c_ulonglong(-1)
+NVML_VALUE_NOT_AVAILABLE_uint = c_uint(-1)
+
+# Added CUDA 10.0
+NVML_DEVICE_PCI_BUS_ID_LEGACY_FMT = "%04X:%02X:%02X.0"
+NVML_DEVICE_PCI_BUS_ID_FMT = "%08X:%02X:%02X.0"
+
+# Updated from 6 to 12 in CUDA 11.0
+NVML_NVLINK_MAX_LINKS = 12
+
+_nvmlNvLinkUtilizationCountUnits_t = c_uint
+NVML_NVLINK_COUNTER_UNIT_CYCLES    = 0
+NVML_NVLINK_COUNTER_UNIT_PACKETS   = 1
+NVML_NVLINK_COUNTER_UNIT_BYTES     = 2
+# Added CUDA 10.1
+NVML_NVLINK_COUNTER_UNIT_RESERVED  = 3
+NVML_NVLINK_COUNTER_UNIT_COUNT     = 4
+
+_nvmlNvLinkUtilizationCountPktTypes_t = c_uint
+NVML_NVLINK_COUNTER_PKTFILTER_NOP = 0x1
+NVML_NVLINK_COUNTER_PKTFILTER_READ = 0x2
+NVML_NVLINK_COUNTER_PKTFILTER_WRITE = 0x4
+NVML_NVLINK_COUNTER_PKTFILTER_RATOM = 0x8
+NVML_NVLINK_COUNTER_PKTFILTER_NRATOM = 0x10
+NVML_NVLINK_COUNTER_PKTFILTER_FLUSH = 0x20
+NVML_NVLINK_COUNTER_PKTFILTER_RESPDATA = 0x40
+NVML_NVLINK_COUNTER_PKTFILTER_RESPNODATA = 0x80
+NVML_NVLINK_COUNTER_PKTFILTER_ALL = 0xFF
+
+_nvmlNvLinkUtilizationControl_t = c_int
+
+_nvmlNvLinkCapability_t = c_uint
+NVML_NVLINK_CAP_P2P_SUPPORTED = 0
+NVML_NVLINK_CAP_SYSMEM_ACCESS = 1
+NVML_NVLINK_CAP_P2P_ATOMICS = 2
+NVML_NVLINK_CAP_SYSMEM_ATOMICS = 3
+NVML_NVLINK_CAP_SLI_BRIDGE = 4
+NVML_NVLINK_CAP_VALID = 5
+NVML_NVLINK_CAP_COUNT = 6
+
+_nvmlNvLinkErrorCounter_t = c_uint
+NVML_NVLINK_ERROR_DL_REPLAY = 0
+NVML_NVLINK_ERROR_DL_RECOVERY = 1
+NVML_NVLINK_ERROR_DL_CRC_FLIT = 2
+NVML_NVLINK_ERROR_DL_CRC_DATA = 3
+NVML_NVLINK_ERROR_COUNT = 4
+
+_nvmlGpuTopologyLevel_t = c_uint
+NVML_TOPOLOGY_INTERNAL   = 0
+NVML_TOPOLOGY_SINGLE     = 10
+NVML_TOPOLOGY_MULTIPLE   = 20
+NVML_TOPOLOGY_HOSTBRIDGE = 30
+NVML_TOPOLOGY_NODE       = 40
+NVML_TOPOLOGY_SYSTEM     = 50
+# Changed from CPU to NODE in CUDA 9.1
+NVML_TOPOLOGY_CPU        = 40
+
+#Added CUDA 9.0
+_nvmlGpuP2PStatus_t = c_uint
+NVML_P2P_STATUS_OK                         = 0
+NVML_P2P_STATUS_CHIPSET_NOT_SUPPORED       = 1
+NVML_P2P_STATUS_GPU_NOT_SUPPORTED          = 2
+NVML_P2P_STATUS_IOH_TOPOLOGY_NOT_SUPPORTED = 3
+NVML_P2P_STATUS_DISABLED_BY_REGKEY         = 4
+NVML_P2P_STATUS_NOT_SUPPORTED              = 5
+NVML_P2P_STATUS_UNKNOWN                    = 6
+      
+#Added CUDA 9.0
+_nvmlGpuP2PCapsIndex_t = c_uint
+NVML_P2P_CAPS_INDEX_READ     = 0
+NVML_P2P_CAPS_INDEX_WRITE    = 1
+NVML_P2P_CAPS_INDEX_NVLINK   = 2
+NVML_P2P_CAPS_INDEX_ATOMICS  = 3
+NVML_P2P_CAPS_INDEX_PROP     = 4
+NVML_P2P_CAPS_INDEX_UNKNOWN  = 5
+
+_nvmlSamplingType_t = c_uint
+NVML_TOTAL_POWER_SAMPLES        = 0
+NVML_GPU_UTILIZATION_SAMPLES    = 1
+NVML_MEMORY_UTILIZATION_SAMPLES = 2
+NVML_ENC_UTILIZATION_SAMPLES    = 3
+NVML_DEC_UTILIZATION_SAMPLES    = 4
+NVML_PROCESSOR_CLK_SAMPLES      = 5
+NVML_MEMORY_CLK_SAMPLES         = 6
+NVML_SAMPLINGTYPE_COUNT         = 7
+
+_nvmlPcieUtilCounter_t = c_uint
+NVML_PCIE_UTIL_TX_BYTES = 0
+NVML_PCIE_UTIL_RX_BYTES = 1
+NVML_PCIE_UTIL_COUNT    = 2
+
+_nvmlValueType_t = c_uint
+NVML_VALUE_TYPE_DOUBLE             = 0
+NVML_VALUE_TYPE_UNSIGNED_INT       = 1
+NVML_VALUE_TYPE_UNSIGNED_LONG      = 2
+NVML_VALUE_TYPE_UNSIGNED_LONG_LONG = 3
+#Added CUDA 9.0
+NVML_VALUE_TYPE_SIGNED_LONG_LONG   = 4
+NVML_VALUE_TYPE_COUNT              = 5
+
+
+_nvmlPerfPolicyType_t = c_uint
+NVML_PERF_POLICY_POWER             = 0
+NVML_PERF_POLICY_THERMAL           = 1
+#Added CUDA 9.0
+NVML_PERF_POLICY_SYNC_BOOST        = 2
+NVML_PERF_POLICY_BOARD_LIMIT       = 3
+NVML_PERF_POLICY_LOW_UTILIZATION   = 4
+NVML_PERF_POLICY_RELIABILITY       = 5
+NVML_PERF_POLICY_TOTAL_APP_CLOCKS  = 10
+NVML_PERF_POLICY_TOTAL_BASE_CLOCKS = 11
+NVML_PERF_POLICY_COUNT             = 12
+
 _nvmlEnableState_t = c_uint
 NVML_FEATURE_DISABLED    = 0
 NVML_FEATURE_ENABLED     = 1
+
+# C preprocessor defined values
+nvmlFlagDefault             = 0
+nvmlFlagForce               = 1
 
 _nvmlBrandType_t = c_uint
 NVML_BRAND_UNKNOWN = 0
@@ -55,12 +180,17 @@ NVML_BRAND_TESLA   = 2
 NVML_BRAND_NVS     = 3
 NVML_BRAND_GRID    = 4
 NVML_BRAND_GEFORCE = 5
-NVML_BRAND_COUNT   = 6
+# CUDA 9.2
+NVML_BRAND_TITAN   = 6
+NVML_BRAND_COUNT   = 7
 
 _nvmlTemperatureThresholds_t = c_uint
 NVML_TEMPERATURE_THRESHOLD_SHUTDOWN = 0
 NVML_TEMPERATURE_THRESHOLD_SLOWDOWN = 1
-NVML_TEMPERATURE_THRESHOLD_COUNT = 1
+# CUDA 9.0
+NVML_TEMPERATURE_THRESHOLD_MEM_MAX  = 2
+NVML_TEMPERATURE_THRESHOLD_GPU_MAX  = 3
+NVML_TEMPERATURE_THRESHOLD_COUNT    = 4
 
 _nvmlTemperatureSensors_t = c_uint
 NVML_TEMPERATURE_GPU     = 0
@@ -101,7 +231,17 @@ _nvmlClockType_t = c_uint
 NVML_CLOCK_GRAPHICS  = 0
 NVML_CLOCK_SM        = 1
 NVML_CLOCK_MEM       = 2
-NVML_CLOCK_COUNT     = 3
+# CUDA 9.0
+NVML_CLOCK_VIDEO     = 3
+NVML_CLOCK_COUNT     = 4
+
+# CUDA 9.0
+_nvmlClockId_t = c_uint
+NVML_CLOCK_ID_CURRENT            = 0
+NVML_CLOCK_ID_APP_CLOCK_TARGET   = 1
+NVML_CLOCK_ID_APP_CLOCK_DEFAULT  = 2
+NVML_CLOCK_ID_CUSTOMER_BOOST_MAX = 3
+NVML_CLOCK_ID_COUNT              = 4
 
 _nvmlDriverModel_t = c_uint
 NVML_DRIVER_WDDM       = 0
@@ -125,6 +265,11 @@ NVML_PSTATE_13              = 13
 NVML_PSTATE_14              = 14
 NVML_PSTATE_15              = 15
 NVML_PSTATE_UNKNOWN         = 32
+
+_nvmlGpuOperationMode_t = c_uint
+NVML_GOM_ALL_ON                 = 0
+NVML_GOM_COMPUTE                = 1
+NVML_GOM_LOW_DP                 = 2
 
 _nvmlInforomObject_t = c_uint
 NVML_INFOROM_OEM            = 0
@@ -152,20 +297,27 @@ NVML_ERROR_GPU_IS_LOST         = 15
 NVML_ERROR_RESET_REQUIRED      = 16
 NVML_ERROR_OPERATING_SYSTEM    = 17
 NVML_ERROR_LIB_RM_VERSION_MISMATCH = 18
+# CUDA 9.0
+NVML_ERROR_IN_USE              = 19
+NVML_ERROR_MEMORY              = 20
+NVML_ERROR_NO_DATA             = 21
+NVML_ERROR_VGPU_ECC_NOT_SUPPORTED = 22
+# CUDA 11.0
+NVML_ERROR_INSUFFICIENT_RESOURCES = 23
 NVML_ERROR_UNKNOWN             = 999
 
-_nvmlFanState_t = c_uint
-NVML_FAN_NORMAL             = 0
-NVML_FAN_FAILED             = 1
-
-_nvmlLedColor_t = c_uint
-NVML_LED_COLOR_GREEN        = 0
-NVML_LED_COLOR_AMBER        = 1
-
-_nvmlGpuOperationMode_t = c_uint
-NVML_GOM_ALL_ON                 = 0
-NVML_GOM_COMPUTE                = 1
-NVML_GOM_LOW_DP                 = 2
+# CUDA 9.0
+_nvmlMemoryLocation_t = c_uint
+NVML_MEMORY_LOCATION_L1_CACHE      = 0
+NVML_MEMORY_LOCATION_L2_CACHE      = 1
+NVML_MEMORY_LOCATION_DEVICE_MEMORY = 2
+NVML_MEMORY_LOCATION_REGISTER_FILE = 3
+NVML_MEMORY_LOCATION_TEXTURE_MEMORY = 4
+NVML_MEMORY_LOCATION_TEXTURE_SHM   = 5
+NVML_MEMORY_LOCATION_CBU           = 6
+# CUDA 10.0
+NVML_MEMORY_LOCATION_SRAM          = 7
+NVML_MEMORY_LOCATION_COUNT         = 8
 
 _nvmlPageRetirementCause_t = c_uint
 NVML_PAGE_RETIREMENT_CAUSE_DOUBLE_BIT_ECC_ERROR           = 0
@@ -177,101 +329,273 @@ NVML_RESTRICTED_API_SET_APPLICATION_CLOCKS                = 0
 NVML_RESTRICTED_API_SET_AUTO_BOOSTED_CLOCKS               = 1
 NVML_RESTRICTED_API_COUNT                                 = 2
 
-_nvmlBridgeChipType_t = c_uint
-NVML_BRIDGE_CHIP_PLX = 0
-NVML_BRIDGE_CHIP_BRO4 = 1
-NVML_MAX_PHYSICAL_BRIDGE = 128
+# Added CUDA 9.0
+_nvmlGpuVirtualizationMode = c_uint
+NVML_GPU_VIRTUALIZATION_MODE_NONE        = 0
+NVML_GPU_VIRTUALIZATION_MODE_PASSTHROUGH = 1
+NVML_GPU_VIRTUALIZATION_MODE_VGPU        = 2
+NVML_GPU_VIRTUALIZATION_MODE_HOST_VGPU   = 3
+NVML_GPU_VIRTUALIZATION_MODE_HOST_VSGA   = 4
 
-_nvmlValueType_t = c_uint
-NVML_VALUE_TYPE_DOUBLE = 0
-NVML_VALUE_TYPE_UNSIGNED_INT = 1
-NVML_VALUE_TYPE_UNSIGNED_LONG = 2
-NVML_VALUE_TYPE_UNSIGNED_LONG_LONG = 3
-NVML_VALUE_TYPE_COUNT = 4
+# Added CUDA 9.0
+_nvmlHostVgpuMode_t = c_uint
+NVML_HOST_VGPU_MODE_NON_SRIOV = 0
+NVML_HOST_VGPU_MODE_SRIOV     = 1
 
-_nvmlPerfPolicyType_t = c_uint
-NVML_PERF_POLICY_POWER = 0
-NVML_PERF_POLICY_THERMAL = 1
-NVML_PERF_POLICY_COUNT = 2
+# Added CUDA 9.0
+_nvmlVgpuVmIdType_t = c_uint
+NVML_VGPU_VM_ID_DOMAIN_ID = 0
+NVML_VGPU_VM_ID_UUID      = 1
 
-_nvmlSamplingType_t = c_uint
-NVML_TOTAL_POWER_SAMPLES = 0
-NVML_GPU_UTILIZATION_SAMPLES = 1
-NVML_MEMORY_UTILIZATION_SAMPLES = 2
-NVML_ENC_UTILIZATION_SAMPLES = 3
-NVML_DEC_UTILIZATION_SAMPLES = 4
-NVML_PROCESSOR_CLK_SAMPLES = 5
-NVML_MEMORY_CLK_SAMPLES = 6
-NVML_SAMPLINGTYPE_COUNT = 7
+# Added CUDA 9.0
+_nvmlVgpuGuestInfoState_t = c_uint
+NVML_VGPU_INSTANCE_GUEST_INFO_STATE_UNINITIALIZED = 0
+NVML_VGPU_INSTANCE_GUEST_INFO_STATE_INITIALIZED   = 1
 
-_nvmlPcieUtilCounter_t = c_uint
-NVML_PCIE_UTIL_TX_BYTES = 0
-NVML_PCIE_UTIL_RX_BYTES = 1
-NVML_PCIE_UTIL_COUNT = 2
+# Added CUDA 9.0
+_nvmlGridLicenseFeatureCode_t = c_uint
+NVML_GRID_LICENSE_FEATURE_CODE_VGPU         = 0
+NVML_GRID_LICENSE_FEATURE_CODE_VWORKSTATION = 1
 
-_nvmlGpuTopologyLevel_t = c_uint
-NVML_TOPOLOGY_INTERNAL = 0
-NVML_TOPOLOGY_SINGLE = 10
-NVML_TOPOLOGY_MULTIPLE = 20
-NVML_TOPOLOGY_HOSTBRIDGE = 30
-NVML_TOPOLOGY_CPU = 40
-NVML_TOPOLOGY_SYSTEM = 50
+#Added CUDA 11.0
+_nvmlDeviceArchitecture_t = c_uint
+NVML_DEVICE_ARCH_KEPLER  = 2
+NVML_DEVICE_ARCH_MAXWELL = 3
+NVML_DEVICE_ARCH_PASCAL  = 4
+NVML_DEVICE_ARCH_VOLTA   = 5
+NVML_DEVICE_ARCH_TURING  = 6
+NVML_DEVICE_ARCH_AMPERE  = 7
+NVML_DEVICE_ARCH_UNKNOWN = 0xffffffff
 
-_nvmlNvLinkCapability_t = c_uint
-NVML_NVLINK_CAP_P2P_SUPPORTED = 0
-NVML_NVLINK_CAP_SYSMEM_ACCESS = 1
-NVML_NVLINK_CAP_P2P_ATOMICS = 2
-NVML_NVLINK_CAP_SYSMEM_ATOMICS = 3
-NVML_NVLINK_CAP_SLI_BRIDGE = 4
-NVML_NVLINK_CAP_VALID = 5
-NVML_NVLINK_CAP_COUNT = 6
+# Added CUDA 9.0
+_nvmlFieldValueEnums_t = c_uint
+NVML_FI_DEV_ECC_CURRENT        = 1
+NVML_FI_DEV_ECC_PENDING        = 2
+NVML_FI_DEV_ECC_SBE_VOL_TOTAL  = 3 
+NVML_FI_DEV_ECC_DBE_VOL_TOTAL  = 4
+NVML_FI_DEV_ECC_SBE_AGG_TOTAL  = 5
+NVML_FI_DEV_ECC_DBE_AGG_TOTAL  = 6
+NVML_FI_DEV_ECC_SBE_VOL_L1     = 7
+NVML_FI_DEV_ECC_DBE_VOL_L1     = 8
+NVML_FI_DEV_ECC_SBE_VOL_L2     = 9
+NVML_FI_DEV_ECC_DBE_VOL_L2     = 10
+NVML_FI_DEV_ECC_SBE_VOL_DEV    = 11
+NVML_FI_DEV_ECC_DBE_VOL_DEV    = 12
+NVML_FI_DEV_ECC_SBE_VOL_REG    = 13
+NVML_FI_DEV_ECC_DBE_VOL_REG    = 14
+NVML_FI_DEV_ECC_SBE_VOL_TEX    = 15
+NVML_FI_DEV_ECC_DBE_VOL_TEX    = 16
+NVML_FI_DEV_ECC_DBE_VOL_CBU    = 17
+NVML_FI_DEV_ECC_SBE_AGG_L1     = 18
+NVML_FI_DEV_ECC_DBE_AGG_L1     = 19
+NVML_FI_DEV_ECC_SBE_AGG_L2     = 20
+NVML_FI_DEV_ECC_DBE_AGG_L2     = 21
+NVML_FI_DEV_ECC_SBE_AGG_DEV    = 22
+NVML_FI_DEV_ECC_DBE_AGG_DEV    = 23
+NVML_FI_DEV_ECC_SBE_AGG_REG    = 24
+NVML_FI_DEV_ECC_DBE_AGG_REG    = 25
+NVML_FI_DEV_ECC_SBE_AGG_TEX    = 26
+NVML_FI_DEV_ECC_DBE_AGG_TEX    = 27
+NVML_FI_DEV_ECC_DBE_AGG_CBU    = 28
+NVML_FI_DEV_RETIRED_SBE        = 29
+NVML_FI_DEV_RETIRED_DBE        = 30
+NVML_FI_DEV_RETIRED_PENDING    = 31
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_L0      = 32
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_L1      = 33
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_L2      = 34
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_L3      = 35
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_L4      = 36
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_L5      = 37
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_TOTAL   = 38
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_L0      = 39
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_L1      = 40
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_L2      = 41
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_L3      = 42
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_L4      = 43
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_L5      = 44
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_TOTAL   = 45
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_L0        = 46
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_L1        = 47
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_L2        = 48
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_L3        = 49
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_L4        = 50
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_L5        = 51
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_TOTAL     = 52
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_L0      = 53
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_L1      = 54
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_L2      = 55
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_L3      = 56
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_L4      = 57
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_L5      = 58
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_TOTAL   = 59
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_L0    = 60
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_L1    = 61
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_L2    = 62
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_L3    = 63
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_L4    = 64
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_L5    = 65
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_TOTAL = 66
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_L0    = 67
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_L1    = 68
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_L2    = 69
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_L3    = 70
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_L4    = 71
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_L5    = 72
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_TOTAL = 73
+NVML_FI_DEV_PERF_POLICY_POWER               = 74
+NVML_FI_DEV_PERF_POLICY_THERMAL             = 75
+NVML_FI_DEV_PERF_POLICY_SYNC_BOOST          = 76
+NVML_FI_DEV_PERF_POLICY_BOARD_LIMIT         = 77
+NVML_FI_DEV_PERF_POLICY_LOW_UTILIZATION     = 78
+NVML_FI_DEV_PERF_POLICY_RELIABILITY         = 79
+NVML_FI_DEV_PERF_POLICY_TOTAL_APP_CLOCKS    = 80
+NVML_FI_DEV_PERF_POLICY_TOTAL_BASE_CLOCKS   = 81
+NVML_FI_DEV_MEMORY_TEMP                     = 82
+NVML_FI_DEV_TOTAL_ENERGY_CONSUMPTION        = 83
+# Added CUDA 9.1
+NVML_FI_DEV_NVLINK_SPEED_MBPS_L0       = 84
+NVML_FI_DEV_NVLINK_SPEED_MBPS_L1       = 85
+NVML_FI_DEV_NVLINK_SPEED_MBPS_L2       = 86
+NVML_FI_DEV_NVLINK_SPEED_MBPS_L3       = 87
+NVML_FI_DEV_NVLINK_SPEED_MBPS_L4       = 88
+NVML_FI_DEV_NVLINK_SPEED_MBPS_L5       = 89
+NVML_FI_DEV_NVLINK_SPEED_MBPS_COMMON   = 90
+NVML_FI_DEV_NVLINK_LINK_COUNT          = 91
+# Added CUDA 9.2
+NVML_FI_DEV_RETIRED_PENDING_SBE        = 92
+NVML_FI_DEV_RETIRED_PENDING_DBE        = 93
+# Added CUDA 10.0
+NVML_FI_DEV_PCIE_REPLAY_COUNTER             = 94
+NVML_FI_DEV_PCIE_REPLAY_ROLLOVER_COUNTER    = 95
+# Added CUDA 11.0
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_L6  = 96
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_L7  = 97
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_L8  = 98
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_L9  = 99
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_L10 = 100
+NVML_FI_DEV_NVLINK_CRC_FLIT_ERROR_COUNT_L11 = 101
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_L6  = 102
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_L7  = 103
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_L8  = 104
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_L9  = 105
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_L10 = 106
+NVML_FI_DEV_NVLINK_CRC_DATA_ERROR_COUNT_L11 = 107
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_L6    = 108
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_L7    = 119
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_L8    = 110
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_L9    = 111
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_L10   = 112
+NVML_FI_DEV_NVLINK_REPLAY_ERROR_COUNT_L11   = 113
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_L6  = 114
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_L7  = 115
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_L8  = 116
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_L9  = 117
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_L10 = 118
+NVML_FI_DEV_NVLINK_RECOVERY_ERROR_COUNT_L11 = 119
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_L6    = 120
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_L7    = 121
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_L8    = 122
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_L9    = 123
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_L10   = 124
+NVML_FI_DEV_NVLINK_BANDWIDTH_C0_L11   = 125
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_L6    = 126
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_L7    = 127
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_L8    = 128
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_L9    = 129
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_L10   = 130
+NVML_FI_DEV_NVLINK_BANDWIDTH_C1_L11   = 131
+NVML_FI_DEV_NVLINK_SPEED_MBPS_L6      = 132
+NVML_FI_DEV_NVLINK_SPEED_MBPS_L7      = 133
+NVML_FI_DEV_NVLINK_SPEED_MBPS_L8      = 134
+NVML_FI_DEV_NVLINK_SPEED_MBPS_L9      = 135
+NVML_FI_DEV_NVLINK_SPEED_MBPS_L10     = 136
+NVML_FI_DEV_NVLINK_SPEED_MBPS_L11     = 137
+NVML_FI_DEV_NVLINK_THROUGHPUT_DATA_TX = 138 
+NVML_FI_DEV_NVLINK_THROUGHPUT_DATA_RX = 139
+NVML_FI_DEV_NVLINK_THROUGHPUT_RAW_TX  = 140
+NVML_FI_DEV_NVLINK_THROUGHPUT_RAW_R   = 141
+NVML_FI_DEV_REMAPPED_COR        = 142
+NVML_FI_DEV_REMAPPED_UNC        = 143
+NVML_FI_DEV_REMAPPED_PENDING    = 144
+NVML_FI_DEV_REMAPPED_FAILURE    = 145
+NVML_FI_MAX                     = 146
 
-_nvmlNvLinkErrorCounter_t = c_uint
-NVML_NVLINK_ERROR_DL_REPLAY = 0
-NVML_NVLINK_ERROR_DL_RECOVERY = 1
-NVML_NVLINK_ERROR_DL_CRC_FLIT = 2
-NVML_NVLINK_ERROR_DL_CRC_DATA = 3
-NVML_NVLINK_ERROR_COUNT = 4
+_nvmlFanState_t = c_uint
+NVML_FAN_NORMAL = 0
+NVML_FAN_FAILED = 1
 
-_nvmlNvLinkUtilizationCountPktTypes_t = c_uint
-NVML_NVLINK_COUNTER_PKTFILTER_NOP = 0x1
-NVML_NVLINK_COUNTER_PKTFILTER_READ = 0x2
-NVML_NVLINK_COUNTER_PKTFILTER_WRITE = 0x4
-NVML_NVLINK_COUNTER_PKTFILTER_RATOM = 0x8
-NVML_NVLINK_COUNTER_PKTFILTER_NRATOM = 0x10
-NVML_NVLINK_COUNTER_PKTFILTER_FLUSH = 0x20
-NVML_NVLINK_COUNTER_PKTFILTER_RESPDATA = 0x40
-NVML_NVLINK_COUNTER_PKTFILTER_RESPNODATA = 0x80
-NVML_NVLINK_COUNTER_PKTFILTER_ALL = 0xFF
+_nvmlLedColor_t = c_uint
+NVML_LED_COLOR_GREEN        = 0
+NVML_LED_COLOR_AMBER        = 1
 
-_nvmlNvLinkUtilizationCountUnits_t = c_uint
-NVML_NVLINK_COUNTER_UNIT_CYCLES = 0
-NVML_NVLINK_COUNTER_UNIT_PACKETS = 1
-NVML_NVLINK_COUNTER_UNIT_BYTES = 2
-NVML_NVLINK_COUNTER_UNIT_COUNT = 3
+#Added CUDA 9.0
+NVML_GRID_LICENSE_BUFFER_SIZE       = 128
+NVML_VGPU_NAME_BUFFER_SIZE          = 64
+NVML_GRID_LICENSE_FEATURE_MAX_COUNT = 3
 
-_nvmlNvLinkUtilizationControl_t = c_int
+#Added CUDA 9.0
+NVML_VGPU_PGPU_VIRTUALIZATION_CAP_MIGRATION     = 0
+NVML_VGPU_PGPU_VIRTUALIZATION_CAP_MIGRATION_NO  = 0
+NVML_VGPU_PGPU_VIRTUALIZATION_CAP_MIGRATION_YES = 1
 
-# C preprocessor defined values
-nvmlFlagDefault             = 0
-nvmlFlagForce               = 1
+#Added CUDA 10.2
+NVML_VGPU_VIRTUALIZATION_CAP_MIGRATION     = 0
+NVML_VGPU_VIRTUALIZATION_CAP_MIGRATION_NO  = 0
+NVML_VGPU_VIRTUALIZATION_CAP_MIGRATION_YES = 1
+
+# Added CUDA 9.0
+_nvmlEncoderQueryType_t = c_uint
+_nvmlEncoderType_t = c_uint
+NVML_ENCODER_QUERY_H264    = 0
+NVML_ENCODER_QUERY_HEVC    = 1
+
+# Added CUDA 10.0
+_nvmlFBCSessionType_t = c_uint
+NVML_FBC_SESSION_TYPE_UNKNOWN = 0
+NVML_FBC_SESSION_TYPE_TOSYS   = 1
+NVML_FBC_SESSION_TYPE_CUDA    = 2
+NVML_FBC_SESSION_TYPE_VID     = 3
+NVML_FBC_SESSION_TYPE_HWENC   = 4
+
+# Added CUDA 10.0
+_nvmlFBCStats_t = c_uint
+NVML_NVFBC_SESSION_FLAG_DIFFMAP_ENABLED            = 1
+NVML_NVFBC_SESSION_FLAG_CLASSIFICATIONMAP_ENABLED  = 2
+NVML_NVFBC_SESSION_FLAG_CAPTURE_WITH_WAIT_NO_WAIT  = 4
+NVML_NVFBC_SESSION_FLAG_CAPTURE_WITH_WAIT_INFINITE = 8
+NVML_NVFBC_SESSION_FLAG_CAPTURE_WITH_WAIT_TIMEOUT  = 16
+
+# Added CUDA 9.2
+_nvmlDetachGpuState_t = c_uint
+NVML_DETACH_GPU_KEEP   = 0
+NVML_DETACH_GPU_REMOVE = 1
+
+# Added CUDA 9.2
+_nvmlPcieLinkState_t = c_uint
+NVML_PCIE_LINK_KEEP      = 0
+NVML_PCIE_LINK_SHUT_DOWN = 1
+
+# Added CUDA 9.1
+_nvmlInitializationAndCleanup_t = c_uint
+NVML_INIT_FLAG_NO_GPUS   = 1
+# Added CUDA 9.2
+NVML_INIT_FLAG_NO_ATTACH = 2
 
 # buffer size
+_nvmlConstants_t = c_uint
 NVML_DEVICE_INFOROM_VERSION_BUFFER_SIZE      = 16
 NVML_DEVICE_UUID_BUFFER_SIZE                 = 80
-NVML_SYSTEM_DRIVER_VERSION_BUFFER_SIZE       = 81
+NVML_SYSTEM_DRIVER_VERSION_BUFFER_SIZE       = 80
 NVML_SYSTEM_NVML_VERSION_BUFFER_SIZE         = 80
 NVML_DEVICE_NAME_BUFFER_SIZE                 = 64
 NVML_DEVICE_SERIAL_BUFFER_SIZE               = 30
 NVML_DEVICE_VBIOS_VERSION_BUFFER_SIZE        = 32
 NVML_DEVICE_PCI_BUS_ID_BUFFER_SIZE           = 32
 NVML_DEVICE_PCI_BUS_ID_BUFFER_V2_SIZE        = 16
-
-# NvLink
-NVML_NVLINK_MAX_LINKS = 6
-
-NVML_VALUE_NOT_AVAILABLE_ulonglong = c_ulonglong(-1)
-NVML_VALUE_NOT_AVAILABLE_uint = c_uint(-1)
+# Added CUDA 9.0
+NVML_DEVICE_PART_NUMBER_BUFFER_SIZE          = 80
+# Added CUDA 11.0
+NVML_DEVICE_UUID_V2_BUFFER_SIZE              = 96
 
 ## ========================================================================== ##
 ##                                                                            ##
@@ -506,20 +830,18 @@ class struct_c_nvmlDevice_t(Structure):
     pass # opaque handle
 c_nvmlDevice_t = POINTER(struct_c_nvmlDevice_t)
 
-class nvmlPciInfo_t(PrintableStructure):
+class c_nvmlPciInfo_t(PrintableStructure):
     _fields_ = [
-        ('busId', c_char * 16),
+# Changed from busId to busIdLegacy in CUDA 9.0
+        ('busIdLegacy', c_char * NVML_DEVICE_PCI_BUS_ID_BUFFER_V2_SIZE),
         ('domain', c_uint),
         ('bus', c_uint),
         ('device', c_uint),
         ('pciDeviceId', c_uint),
-
-        # Added in 2.285
+# Added in 2.285
         ('pciSubSystemId', c_uint),
-        ('reserved0', c_uint),
-        ('reserved1', c_uint),
-        ('reserved2', c_uint),
-        ('reserved3', c_uint),
+# Changed from reserved0-3 to busId in CUDA 9.0
+        ('busId', c_char * NVML_DEVICE_PCI_BUS_ID_BUFFER_SIZE),
     ]
     _fmt_ = {
             'domain'         : "0x%04X",
@@ -528,6 +850,24 @@ class nvmlPciInfo_t(PrintableStructure):
             'pciDeviceId'    : "0x%08X",
             'pciSubSystemId' : "0x%08X",
             }
+            
+class nvmlPciInfo_t(c_nvmlPciInfo_t):
+    pass
+
+class c_nvmlEccErrorCounts_t(PrintableStructure):
+    _fields_ = [
+        ('l1Cache', c_ulonglong),
+        ('l2Cache', c_ulonglong),
+        ('deviceMemory', c_ulonglong),
+        ('registerFile', c_ulonglong),
+    ]
+
+class c_nvmlUtilization_t(PrintableStructure):
+    _fields_ = [
+        ('gpu', c_uint),
+        ('memory', c_uint),
+    ]
+    _fmt_ = {'<default>': "%d %%"}
 
 class c_nvmlMemory_t(PrintableStructure):
     _fields_ = [
@@ -562,6 +902,24 @@ class c_nvmlProcessInfo_t(PrintableStructure):
     ]
     _fmt_ = {'usedGpuMemory': "%d B"}
 
+# Added CUDA 11.0
+class c_nvmlDeviceAttributes_t(PrintableStructure):
+  _fields_ = [
+        ('multiprocessorCount', c_uint),
+        ('sharedCopyEngineCount', c_uint),
+        ('sharedDecoderCount', c_uint),
+        ('sharedEncoderCount', c_uint),
+        ('sharedJpegCount', c_uint),
+        ('sharedOfaCount', c_uint),
+  ]
+
+# Added CUDA 9
+class c_nvmlNvLinkUtilizationControl_t(PrintableStructure):
+  _fields_ = [
+        ('units', _nvmlNvLinkUtilizationCountUnits_t),
+        ('pktfilter', _nvmlNvLinkUtilizationCountPktTypes_t),
+  ]
+  
 class c_nvmlBridgeChipInfo_t(PrintableStructure):
     _fields_ = [
         ('type', _nvmlBridgeChipType_t),
@@ -571,29 +929,7 @@ class c_nvmlBridgeChipInfo_t(PrintableStructure):
 class c_nvmlBridgeChipHierarchy_t(PrintableStructure):
     _fields_ = [
         ('bridgeCount', c_uint),
-        ('bridgeChipInfo', c_nvmlBridgeChipInfo_t * 128),
-    ]
-
-class c_nvmlEccErrorCounts_t(PrintableStructure):
-    _fields_ = [
-        ('l1Cache', c_ulonglong),
-        ('l2Cache', c_ulonglong),
-        ('deviceMemory', c_ulonglong),
-        ('registerFile', c_ulonglong),
-    ]
-
-class c_nvmlUtilization_t(PrintableStructure):
-    _fields_ = [
-        ('gpu', c_uint),
-        ('memory', c_uint),
-    ]
-    _fmt_ = {'<default>': "%d %%"}
-
-# Added in 2.285
-class c_nvmlHwbcEntry_t(PrintableStructure):
-    _fields_ = [
-        ('hwbcId', c_uint),
-        ('firmwareVersion', c_char * 32),
+        ('bridgeChipInfo', c_nvmlBridgeChipInfo_t * NVML_MAX_PHYSICAL_BRIDGE),
     ]
 
 class c_nvmlValue_t(Union):
@@ -616,8 +952,132 @@ class c_nvmlViolationTime_t(PrintableStructure):
         ('violationTime', c_ulonglong),
     ]
 
+## VGPU Structures
+# Added CUDA 9
+_nvmlVgpuTypeId_t = c_uint;
+_nvmlVgpuInstance_t = c_uint;
 
+# Added CUDA 9.0
+class c_nvmlVgpuInstanceUtilizationSample_t(PrintableStructure):
+    _fields_ = [
+        ('vgpuInstance', _nvmlVgpuInstance_t),
+        ('timeStamp', c_ulonglong),
+        ('smUtil', c_nvmlValue_t),
+        ('memUtil', c_nvmlValue_t),
+        ('encUtil', c_nvmlValue_t),
+        ('decUtil', c_nvmlValue_t),
+    ]
 
+# Added CUDA 9.0
+class c_nvmlVgpuProcessUtilizationSample_t(PrintableStructure):
+    _fields_ = [
+        ('vgpuInstance', _nvmlVgpuInstance_t),
+        ('pid', c_uint),
+        ('processName', c_char * NVML_VGPU_NAME_BUFFER_SIZE),
+        ('timeStamp', c_ulonglong),
+        ('smUtil', c_uint),
+        ('memUtil', c_uint),
+        ('encUtil', c_uint),
+        ('decUtil', c_uint),        
+    ]
+
+# Added CUDA 9
+class c_nvmlProcessUtilizationSample_t(PrintableStructure):
+    _fields_ = [
+        ('pid', c_uint),
+        ('timeStamp', c_ulonglong),
+        ('smUtil', c_uint),
+        ('memUtil', c_uint),
+        ('encUtil', c_uint),
+        ('decUtil', c_uint),        
+    ]
+    
+# Added CUDA 9
+class c_nvmlGridLicensableFeature_t(PrintableStructure):
+    _fields_ = [
+        ('featureCode', _nvmlGridLicenseFeatureCode_t),
+        ('featureState', c_uint),
+        ('licenseInfo', c_char * NVML_GRID_LICENSE_BUFFER_SIZE),
+# Added CUDA 10.1
+        ('productName', c_char * NVML_GRID_LICENSE_BUFFER_SIZE),
+# Added CUDA 10.2
+        ('featureEnabled', c_uint),
+    ]
+
+# Added CUDA 9
+class c_nvmlGridLicensableFeatures_t(PrintableStructure):
+    _fields_ = [
+        ('isGridLicenseSupported', c_int),
+        ('licensableFeaturesCount', c_uint),
+        ('gridLicensableFeatures', c_nvmlGridLicensableFeature_t * NVML_GRID_LICENSE_FEATURE_MAX_COUNT),
+    ]
+ 
+## Field Values
+# Added CUDA 9.0
+class c_nvmlFieldValue_t(PrintableStructure):
+    _fields_ = [
+        ('fieldId', c_uint),
+# Changed from unused to scopeId in CUDA 11.0
+        ('scopeId', c_uint),
+        ('timestamp', c_longlong),
+        ('latencyUsec', c_longlong),
+        ('valueType', _nvmlValueType_t),
+        ('nvmlReturn', _nvmlReturn_t),
+        ('value', c_nvmlValue_t),
+    ]
+    
+## Unit structs
+class struct_c_nvmlUnit_t(Structure):
+    pass # opaque handle
+c_nvmlUnit_t = POINTER(struct_c_nvmlUnit_t)
+    
+# Added in 2.285
+class c_nvmlHwbcEntry_t(PrintableStructure):
+    _fields_ = [
+        ('hwbcId', c_uint),
+        ('firmwareVersion', c_char * 32),
+    ]
+    
+# Added CUDA 9
+class c_nvmlLedState_t(PrintableStructure):
+    _fields_ = [
+        ('cause', c_char * 256),
+        ('color', _nvmlLedColor_t),
+    ]
+
+# Added CUDA 9
+class c_nvmlUnitInfo_t(PrintableStructure):
+    _fields_ = [
+        ('name', c_char * 96),
+        ('id', c_char * 96),
+        ('serial', c_char * 96),
+        ('firmwareVersion', c_char * 96),
+    ]
+
+# Added CUDA 9
+class c_nvmlPSUInfo_t(PrintableStructure):
+    _fields_ = [
+        ('state', c_char * 256),
+        ('current', c_uint),
+        ('voltage', c_uint),
+        ('power', c_uint),
+    ]
+
+# Added CUDA 9
+class c_nvmlUnitFanInfo_t(PrintableStructure):
+    _fields_ = [
+        ('speed', c_uint),
+        ('state', _nvmlFanState_t),
+    ]
+
+# Added CUDA 9
+class c_nvmlUnitFanSpeeds_t(PrintableStructure):
+    _fields_ = [
+        ('fans', c_nvmlUnitFanInfo_t * 24),
+        ('count', c_uint),
+    ]
+  
+    
 ## Event structures
 class struct_c_nvmlEventSet_t(Structure):
     pass # opaque handle
@@ -637,6 +1097,17 @@ nvmlEventTypeAll                   = (
                                         nvmlEventTypeClock |
                                         nvmlEventTypeXidCriticalError
                                      )
+class c_nvmlEventData_t(PrintableStructure):
+    _fields_ = [
+        ('device', c_nvmlDevice_t),
+        ('eventType', c_ulonglong),
+        ('eventData', c_ulonglong),
+#Added CUDA 11
+        ('gpuInstanceId', c_uint),
+        ('computeInstanceId', c_uint),
+    ]
+    _fmt_ = {'eventType': "0x%08X"}
+
 
 ## Clock Throttle Reasons defines
 nvmlClocksThrottleReasonGpuIdle           = 0x0000000000000001
@@ -655,14 +1126,7 @@ nvmlClocksThrottleReasonAll               = (
                                                nvmlClocksThrottleReasonUnknown
                                             )
 
-class c_nvmlEventData_t(PrintableStructure):
-    _fields_ = [
-        ('device', c_nvmlDevice_t),
-        ('eventType', c_ulonglong),
-        ('eventData', c_ulonglong)
-    ]
-    _fmt_ = {'eventType': "0x%08X"}
-
+## Account Statistics
 class c_nvmlAccountingStats_t(PrintableStructure):
     _fields_ = [
         ('gpuUtilization', c_uint),
@@ -674,25 +1138,47 @@ class c_nvmlAccountingStats_t(PrintableStructure):
         ('reserved', c_uint * 5)
     ]
 
-class c_nvmlPciInfo_t(PrintableStructure):
+## Encoder structs
+# Added CUDA 9.0
+class c_nvmlEncoderSessionInfo_t(PrintableStructure):
     _fields_ = [
-        ('bus', c_uint),
-        ('busId', c_char * 16),
-        ('busIdLegacy', c_char * 16),
-        ('device', c_uint),
-        ('domain', c_uint),
-        ('pciDeviceId', c_uint),
-        ('pciSubSystemId', c_uint)
+        ('sessionId', c_uint),
+        ('pid', c_uint),
+        ('vgpuInstance', _nvmlVgpuInstance_t),
+        ('codecType', _nvmlEncoderType_t),
+        ('hResolution', c_uint),
+        ('vResolution', c_uint),
+        ('averageFps', c_uint),
+        ('averageLatency', c_uint),
     ]
-    _fmt_ = {
-            'domain'         : "0x%04X",
-            'bus'            : "0x%02X",
-            'device'         : "0x%02X",
-            'pciDeviceId'    : "0x%08X",
-            'pciSubSystemId' : "0x%08X",
-            }
 
+## Frame Buffer Capture Structures
+# Added CUDA 10.0
+class c_nvmlFBCStats_t(PrintableStructure):
+    _fields_ = [
+        ('sessionsCount', c_uint),
+        ('averageFPS', c_uint),
+        ('averageLatency', c_uint),
+    ]
 
+# Added CUDA 10.0
+class c_nvmlFBCSessionInfo_t(PrintableStructure):
+    _fields_ = [
+        ('sessionId', c_uint),
+        ('pid', c_uint),
+        ('vgpuInstance', _nvmlVgpuInstance_t),
+        ('displayOrdinal', c_uint),
+        ('sessionType', _nvmlFBCSessionType_t),
+        ('sessionFlags', c_uint),
+        ('hMaxResolution', c_uint),
+        ('vMaxResolution', c_uint),
+        ('hResolution', c_uint),
+        ('vResolution', c_uint),
+        ('averageFPS', c_uint),
+        ('averageLatency', c_uint),
+        
+    ]
+    
 ## ========================================================================== ##
 ##                                                                            ##
 ##                       NVML Library Function Wrappers                       ##

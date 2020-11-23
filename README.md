@@ -47,6 +47,12 @@ nvsmi = nvidia_smi.getInstance()
 nvsmi.DeviceQuery('memory.free, memory.total')
 ```
 
+```python
+from pynvml.smi import nvidia_smi
+nvsmi = nvidia_smi.getInstance()
+print(nvsmi.DeviceQuery('--help-query-gpu'), end='\n')
+```
+
 Functions
 ---------
 Python methods wrap NVML functions, implemented in a C shared library.

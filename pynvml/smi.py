@@ -36,13 +36,13 @@ Each query parameter is documented within nvdia-smi --help-query-gpu
 From Code:
 DeviceQuery()
 DeviceQuery("--help")
-DeviceQuery("--help_query_gpu")
+DeviceQuery("--help-query-gpu")
 DeviceQuery("pci.bus_id,memory.total,memory.free")
 DeviceQuery([NVSMI_PCI_BUS_ID, NVSMI_MEMORY_TOTAL, NVSMI_MEMORY_FREE])
 
 XmlDeviceQuery()
 XmlDeviceQuery("--help")
-XmlDeviceQuery("--help_query_gpu")
+XmlDeviceQuery("--help-query-gpu")
 """
 
 from pynvml.nvml import *
