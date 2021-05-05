@@ -8,6 +8,8 @@ NVML_PCIE_UTIL_TX_BYTES = pynvml.NVML_PCIE_UTIL_TX_BYTES
 NVML_PCIE_UTIL_RX_BYTES = pynvml.NVML_PCIE_UTIL_RX_BYTES
 NVML_PCIE_UTIL_COUNT = pynvml.NVML_PCIE_UTIL_COUNT
 
+XFAIL_LEGACY_NVLINK_MSG = "Legacy NVLink test expected to fail."
+
 # Fixture to initialize and finalize nvml
 @pytest.fixture(scope='module')
 def nvml(request):
@@ -15,6 +17,11 @@ def nvml(request):
     def nvml_close():
         pynvml.nvmlShutdown()
     request.addfinalizer(nvml_close)
+
+# Fixture to check
+@pytest.fixture(scope='module')
+def driver(request):
+    return float(pynvml.nvmlSystemGetDriverVersion())
 
 # Get GPU count
 @pytest.fixture
@@ -249,7 +256,11 @@ def test_nvmlDeviceGetPcieThroughput(ngpus, handles):
 # Test pynvml.nvmlDeviceGetNvLinkVersion
 # Test pynvml.nvmlDeviceGetNvLinkState
 # Test pynvml.nvmlDeviceGetNvLinkRemotePciInfo
-def test_nvml_nvlink_properties(ngpus, handles):
+def test_nvml_nvlink_properties(ngpus, handles, driver):
+
+    if driver > 450.0:
+        pytest.xfail(XFAIL_LEGACY_NVLINK_MSG)
+
     for i in range(ngpus):
         for j in range(pynvml.NVML_NVLINK_MAX_LINKS):
             version = pynvml.nvmlDeviceGetNvLinkVersion(handles[i], j)
@@ -267,7 +278,11 @@ def test_nvml_nvlink_properties(ngpus, handles):
     pynvml.NVML_NVLINK_CAP_SYSMEM_ATOMICS, # System memory atomics are supported
     pynvml.NVML_NVLINK_CAP_SLI_BRIDGE,     # SLI is supported over this link
     pynvml.NVML_NVLINK_CAP_VALID])         # Link is supported on this device
-def test_nvml_nvlink_capability(ngpus, handles, cap_type):
+def test_nvml_nvlink_capability(ngpus, handles, cap_type, driver):
+
+    if driver > 450.0:
+        pytest.xfail(XFAIL_LEGACY_NVLINK_MSG)
+
     for i in range(ngpus):
         for j in range(pynvml.NVML_NVLINK_MAX_LINKS):
             cap = pynvml.nvmlDeviceGetNvLinkCapability(handles[i], j, cap_type)
@@ -280,7 +295,11 @@ def test_nvml_nvlink_capability(ngpus, handles, cap_type):
 # Test pynvml.nvmlDeviceFreezeNvLinkUtilizationCounter
 @pytest.mark.parametrize('counter', [0, 1])
 @pytest.mark.parametrize('control', [0, 1, 2])
-def test_nvml_nvlink_counters(ngpus, handles, counter, control):
+def test_nvml_nvlink_counters(ngpus, handles, counter, control, driver):
+
+    if driver > 450.0:
+        pytest.xfail(XFAIL_LEGACY_NVLINK_MSG)
+
     reset = 0
     for i in range(ngpus):
         for j in range(pynvml.NVML_NVLINK_MAX_LINKS):
@@ -313,7 +332,11 @@ def test_nvml_nvlink_counters(ngpus, handles, counter, control):
     pynvml.NVML_NVLINK_ERROR_DL_RECOVERY,
     pynvml.NVML_NVLINK_ERROR_DL_CRC_FLIT,
     pynvml.NVML_NVLINK_ERROR_DL_CRC_DATA])
-def test_nvml_nvlink_error_counters(ngpus, handles, error_type):
+def test_nvml_nvlink_error_counters(ngpus, handles, error_type, driver):
+
+    if driver > 450.0:
+        pytest.xfail(XFAIL_LEGACY_NVLINK_MSG)
+
     for i in range(ngpus):
         for j in range(pynvml.NVML_NVLINK_MAX_LINKS):
             assert pynvml.nvmlDeviceResetNvLinkErrorCounters(
