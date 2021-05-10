@@ -52,7 +52,7 @@ def nmigs(handles):
     return result
 
 
-# Get handles using pynvml.nvmlDeviceGetHandleByIndex
+# Get MIG device handles
 @pytest.fixture
 def mig_handles(nmigs):
     handles = [pynvml.nvmlDeviceGetMigDeviceHandleByIndex(i) for i in range(nmigs)]
