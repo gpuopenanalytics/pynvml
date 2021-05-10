@@ -60,6 +60,11 @@ def test_nvmlSystemGetNVMLVersion(nvml):
     print('[NVML Version: '+vsn+']', end =' ')
     assert vsn > LooseVersion("0.0")
 
+def test_nvmlSystemGetCudaDriverVersion():
+    vsn = 0;
+    vsn = nvml.nvmlSystemGetCudaDriverVersion()
+    assert vsn != 0
+
 # Test pynvml.nvmlSystemGetProcessName
 def test_nvmlSystemGetProcessName(nvml):
     procname = None
@@ -78,6 +83,11 @@ def test_nvmlSystemGetDriverVersion(nvml):
 
 ## Device "Get" Functions (Note: Some functions are fixtures, above) ##
 
+def test_nvmlDeviceGetAttributes(handles):
+    for handle in handles:
+        att = pynvml.nvmlDeviceGetAttributes(handle)
+        assert att is not None
+
 # Test pynvml.nvmlDeviceGetHandleBySerial
 def test_nvmlDeviceGetHandleBySerial(ngpus, serials):
     handles = [ pynvml.nvmlDeviceGetHandleBySerial(serials[i])
@@ -95,6 +105,40 @@ def test_nvmlDeviceGetHandleByPciBusId(ngpus, pci_info):
     handles = [ pynvml.nvmlDeviceGetHandleByPciBusId(pci_info[i].busId)
                 for i in range(ngpus) ]
     assert len(handles) == ngpus
+
+@pytest.mark.parametrize("scope", [
+    pynvml.NVML_AFFINITY_SCOPE_NODE,
+    pynvml.NVML_AFFINITY_SCOPE_SOCKET])
+def test_nvmlDeviceGetMemoryAffinity(handles, scope):
+    size = 1024
+    for handle in handles:
+        nodeSet = pynvml.nvmlDeviceGetMemoryAffinity(handle, size, scope)
+        assert nodeSet is not None
+
+@pytest.mark.parametrize("scope", [
+    pynvml.NVML_AFFINITY_SCOPE_NODE,
+    pynvml.NVML_AFFINITY_SCOPE_SOCKET])
+def test_nvmlDeviceGetCpuAffinityWithinScope(handles, scope):
+    size = 1024
+    for handle in handles:
+        cpuSet = pynvml.nvmlDeviceGetCpuAffinityWithinScope(handle, size, scope)
+        assert cpuSet is not None
+
+@pytest.mark.parametrize("index", [
+    pynvml.NVML_P2P_CAPS_INDEX_READ,
+    pynvml.NVML_P2P_CAPS_INDEX_WRITE,
+    pynvml.NVML_P2P_CAPS_INDEX_NVLINK,
+    pynvml.NVML_P2P_CAPS_INDEX_ATOMICS,
+    pynvml.NVML_P2P_CAPS_INDEX_PROP,
+    pynvml.NVML_P2P_CAPS_INDEX_UNKNOWN
+])
+def test_nvmlDeviceGetP2PStatus(handles, index):
+    for h1 in handles:
+        for h2 in handles:
+            if h1 is not h2:
+                status = pynvml.nvmlDeviceGetP2PStatus(h1, h2, index)
+                assert pynvml.NVML_P2P_STATUS_OK <= status <= pynvml.NVML_P2P_STATUS_UNKNOWN
+
 
 # [Skipping] pynvml.nvmlDeviceGetName
 # [Skipping] pynvml.nvmlDeviceGetBoardId

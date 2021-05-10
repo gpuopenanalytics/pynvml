@@ -107,7 +107,7 @@ The GOM currently in use.
 The GOM that will be used on the next reboot.
 
 "fan.speed" or NVSMI_FAN_SPEED
-The fan speed value is the percent of maximum speed that the device's fan is currently intended to run at. It ranges from 0 to 100 %. Note: The reported speed is the intended fan speed. If the fan is physically blocked and unable to spin, this output will not match the actual fan speed. Many parts do not report fan speeds because they rely on cooling via fans in the surrounding enclosure.
+The fan speed value is the percent of the product's maximum noise tolerance fan speed that the device's fan is currently intended to run at. This value may exceed 100% in certain cases. Note: The reported speed is the intended fan speed. If the fan is physically blocked and unable to spin, this output will not match the actual fan speed. Many parts do not report fan speeds because they rely on cooling via fans in the surrounding enclosure.
 
 "pstate" or NVSMI_PSTATE
 The current performance state for the GPU. States range from P0 (maximum performance) to P12 (minimum performance).
@@ -210,6 +210,9 @@ NVIDIA GPUs can provide error counts for various types of ECC errors. Some ECC e
 "ecc.errors.corrected.volatile.device_memory" or NVSMI_ECC_ERROR_CORRECTED_VOLATILE_DEV_MEM
 Errors detected in global device memory.
 
+"ecc.errors.corrected.volatile.dram" or NVSMI_ECC_ERROR_CORRECTED_VOLATILE_DRAM
+Errors detected in global device memory.
+
 "ecc.errors.corrected.volatile.register_file" or NVSMI_ECC_ERROR_CORRECTED_VOLATILE_REGFILE
 Errors detected in register file memory.
 
@@ -222,10 +225,19 @@ Errors detected in the L2 cache.
 "ecc.errors.corrected.volatile.texture_memory" or NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE
 Parity errors detected in texture memory.
 
+"ecc.errors.corrected.volatile.cbu" or NVSMI_ECC_ERROR_CORRECTED_VOLATILE_CBU
+Parity errors detected in CBU.
+
+"ecc.errors.corrected.volatile.sram" or NVSMI_ECC_ERROR_CORRECTED_VOLATILE_SRAM
+Errors detected in global SRAMs.
+
 "ecc.errors.corrected.volatile.total" or NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TOTAL
-Total errors detected across entire chip. Sum of device_memory, register_file, l1_cache, l2_cache and texture_memory.
+Total errors detected across entire chip.
 
 "ecc.errors.corrected.aggregate.device_memory" or NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DEV_MEM
+Errors detected in global device memory.
+
+"ecc.errors.corrected.aggregate.dram" or NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DRAM
 Errors detected in global device memory.
 
 "ecc.errors.corrected.aggregate.register_file" or NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_REGFILE
@@ -240,10 +252,19 @@ Errors detected in the L2 cache.
 "ecc.errors.corrected.aggregate.texture_memory" or NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TEXTURE
 Parity errors detected in texture memory.
 
+"ecc.errors.corrected.aggregate.cbu" or NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_CBU
+Parity errors detected in CBU.
+
+"ecc.errors.corrected.aggregate.sram" or NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_SRAM
+Errors detected in global SRAMs.
+
 "ecc.errors.corrected.aggregate.total" or NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TOTAL
 Total errors detected across entire chip. Sum of device_memory, register_file, l1_cache, l2_cache and texture_memory.
 
 "ecc.errors.uncorrected.volatile.device_memory" or NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_DEV_MEM
+Errors detected in global device memory.
+
+"ecc.errors.uncorrected.volatile.dram" or NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_DRAM
 Errors detected in global device memory.
 
 "ecc.errors.uncorrected.volatile.register_file" or NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_REGFILE
@@ -258,10 +279,19 @@ Errors detected in the L2 cache.
 "ecc.errors.uncorrected.volatile.texture_memory" or NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TEXTURE
 Parity errors detected in texture memory.
 
+"ecc.errors.uncorrected.volatile.cbu" or NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_CBU
+Parity errors detected in CBU.
+
+"ecc.errors.uncorrected.volatile.sram" or NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_SRAM
+Errors detected in global SRAMs.
+
 "ecc.errors.uncorrected.volatile.total" or NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TOTAL
-Total errors detected across entire chip. Sum of device_memory, register_file, l1_cache, l2_cache and texture_memory.
+Total errors detected across entire chip. 
 
 "ecc.errors.uncorrected.aggregate.device_memory" or NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_DEV_MEM
+Errors detected in global device memory.
+
+"ecc.errors.uncorrected.aggregate.dram"  or NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_DRAM
 Errors detected in global device memory.
 
 "ecc.errors.uncorrected.aggregate.register_file" or NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_REGFILE
@@ -276,8 +306,14 @@ Errors detected in the L2 cache.
 "ecc.errors.uncorrected.aggregate.texture_memory" or NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TEXTURE
 Parity errors detected in texture memory.
 
+"ecc.errors.uncorrected.aggregate.cbu" or NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_CBU
+Parity errors detected in CBU.
+
+"ecc.errors.uncorrected.aggregate.sram" or NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_SRAM
+Errors detected in global SRAMs.
+
 "ecc.errors.uncorrected.aggregate.total" or NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TOTAL
-Total errors detected across entire chip. Sum of device_memory, register_file, l1_cache, l2_cache and texture_memory.
+Total errors detected across entire chip. 
 
 Section about retired_pages properties
 NVIDIA GPUs can retire pages of GPU device memory when they become unreliable. This can happen when multiple single bit ECC errors occur for the same page, or on a double bit ECC error. When a page is retired, the NVIDIA driver will hide it such that no driver, or application memory allocations can access it.
@@ -359,6 +395,17 @@ Maximum frequency of SM (Streaming Multiprocessor) clock.
 
 "clocks.max.memory" or "clocks.max.mem" or NVSMI_CLOCKS_MEMORY_MAX
 Maximum frequency of memory clock.
+
+Section about mig.mode properties
+A flag that indicates whether MIG mode is enabled. May be either "Enabled" or "Disabled". Changes to MIG mode require a GPU reset.
+
+"mig.mode.current" or NVSMI_MIG_MODE_CURRENT
+The MIG mode that the GPU is currently operating under.
+
+"mig.mode.pending" or NVSMI_MIG_MODE_PENDING
+The MIG mode that the GPU will operate under after reset.
+
+Section about commands to return additional properties
 
 "supported-clocks" or NVSMI_CLOCKS_SUPPORTED
 List of supported clocks.
