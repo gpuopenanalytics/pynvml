@@ -3507,5 +3507,3 @@ def nvmlDeviceGetArchitecture(device):
     ret = fn(device, byref(arch))
     _nvmlCheckReturn(ret)
     return arch.value
-
-    
