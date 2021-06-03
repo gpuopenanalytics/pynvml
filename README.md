@@ -7,7 +7,10 @@ This is a wrapper around the NVML library.
 For information about the NVML library, see the NVML developer page
 http://developer.nvidia.com/nvidia-management-library-nvml
 
-Note this file can be run with 'python -m doctest -v README.txt'
+As of version 11.0.0, the NVML-wrappers used in pynvml are identical
+to those published through [nvidia-ml-py](https://pypi.org/project/nvidia-ml-py/).
+
+Note that this file can be run with 'python -m doctest -v README.txt'
 although the results are system dependent
 
 Requires
@@ -27,12 +30,12 @@ You can use the lower level nvml bindings
 ```python
 >>> from pynvml import *
 >>> nvmlInit()
->>> print "Driver Version:", nvmlSystemGetDriverVersion()
+>>> print("Driver Version:", nvmlSystemGetDriverVersion())
 Driver Version: 410.00
 >>> deviceCount = nvmlDeviceGetCount()
 >>> for i in range(deviceCount):
 ...     handle = nvmlDeviceGetHandleByIndex(i)
-...     print "Device", i, ":", nvmlDeviceGetName(handle)
+...     print("Device", i, ":", nvmlDeviceGetName(handle))
 ...
 Device 0 : Tesla V100
 
@@ -193,3 +196,7 @@ Release Notes
     - Added nvmlDeviceGetTotalEnergyConsumption
     - Added notes about NVML permissions
     - Fixed version-check testing
+-   Version 11.0.0
+    - Updated nvml.py to CUDA 11
+    - Updated smi.py DeviceQuery to R460
+    - Aligned nvml.py with latest nvidia-ml-py deployment
