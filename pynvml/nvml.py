@@ -44,21 +44,21 @@ NVML_FEATURE_ENABLED     = 1
 
 _nvmlBrandType_t = c_uint
 NVML_BRAND_UNKNOWN        = 0
-NVML_BRAND_QUADRO         = 1   
-NVML_BRAND_TESLA          = 2   
+NVML_BRAND_QUADRO         = 1
+NVML_BRAND_TESLA          = 2
 NVML_BRAND_NVS            = 3
 NVML_BRAND_GRID           = 4   # Deprecated from API reporting. Keeping definition for backward compatibility.
-NVML_BRAND_GEFORCE        = 5   
-NVML_BRAND_TITAN          = 6   
+NVML_BRAND_GEFORCE        = 5
+NVML_BRAND_TITAN          = 6
 NVML_BRAND_NVIDIA_VAPPS   = 7   # NVIDIA Virtual Applications
 NVML_BRAND_NVIDIA_VPC     = 8   # NVIDIA Virtual PC
 NVML_BRAND_NVIDIA_VCS     = 9   # NVIDIA Virtual Compute Server
 NVML_BRAND_NVIDIA_VWS     = 10  # NVIDIA RTX Virtual Workstation
 NVML_BRAND_NVIDIA_VGAMING = 11  # NVIDIA vGaming
-NVML_BRAND_QUADRO_RTX     = 12  
-NVML_BRAND_NVIDIA_RTX     = 13  
-NVML_BRAND_NVIDIA         = 14  
-NVML_BRAND_GEFORCE_RTX    = 15  # Unused  
+NVML_BRAND_QUADRO_RTX     = 12
+NVML_BRAND_NVIDIA_RTX     = 13
+NVML_BRAND_NVIDIA         = 14
+NVML_BRAND_GEFORCE_RTX    = 15  # Unused
 NVML_BRAND_TITAN_RTX      = 16  # Unused
 NVML_BRAND_COUNT          = 17
 
@@ -141,6 +141,12 @@ NVML_NVLINK_COUNTER_UNIT_PACKETS  = 1
 NVML_NVLINK_COUNTER_UNIT_BYTES    = 2
 NVML_NVLINK_COUNTER_UNIT_RESERVED = 3
 NVML_NVLINK_COUNTER_UNIT_COUNT    = 4
+
+_nvmlNvLinkDeviceType_t = c_uint
+NVML_NVLINK_DEVICE_TYPE_GPU     = 0x00
+NVML_NVLINK_DEVICE_TYPE_IBMNPU  = 0x01
+NVML_NVLINK_DEVICE_TYPE_SWITCH  = 0x02
+NVML_NVLINK_DEVICE_TYPE_UNKNOWN = 0xFF
 
 # These are deprecated, instead use _nvmlMemoryErrorType_t
 _nvmlEccBitType_t = c_uint
@@ -226,6 +232,7 @@ NVML_ERROR_MEMORY                   = 20
 NVML_ERROR_NO_DATA                  = 21
 NVML_ERROR_VGPU_ECC_NOT_SUPPORTED   = 22
 NVML_ERROR_INSUFFICIENT_RESOURCES   = 23
+NVML_ERROR_FREQ_NOT_SUPPORTED       = 24
 NVML_ERROR_UNKNOWN                  = 999
 
 _nvmlFanState_t = c_uint
@@ -319,7 +326,7 @@ NVML_TOPOLOGY_CPU = NVML_TOPOLOGY_NODE
 NVML_TOPOLOGY_SYSTEM = 50
 
 _nvmlGpuP2PCapsIndex_t = c_uint
-NVML_P2P_CAPS_INDEX_READ = 0
+NVML_P2P_CAPS_INDEX_READ = 0,
 NVML_P2P_CAPS_INDEX_WRITE = 1
 NVML_P2P_CAPS_INDEX_NVLINK =2
 NVML_P2P_CAPS_INDEX_ATOMICS = 3
@@ -344,6 +351,14 @@ NVML_DEVICE_ARCH_VOLTA    = 5
 NVML_DEVICE_ARCH_TURING   = 6
 NVML_DEVICE_ARCH_AMPERE   = 7
 NVML_DEVICE_ARCH_UNKNOWN  = 0xffffffff
+
+# PCI bus Types
+_nvmlBusType_t = c_uint
+NVML_BUS_TYPE_UNKNOWN = 0
+NVML_BUS_TYPE_PCI     = 1
+NVML_BUS_TYPE_PCIE    = 2
+NVML_BUS_TYPE_FPCI    = 3
+NVML_BUS_TYPE_AGP     = 4
 
 _nvmlClockLimitId_t = c_uint
 NVML_CLOCK_LIMIT_ID_RANGE_START = 0xffffff00
@@ -638,6 +653,13 @@ NVML_GRID_LICENSE_FEATURE_CODE_VWORKSTATION = 2 # deprecated, use NVML_GRID_LICE
 NVML_GRID_LICENSE_FEATURE_CODE_GAMING       = 3
 NVML_GRID_LICENSE_FEATURE_CODE_COMPUTE      = 4
 
+_nvmlGridLicenseExpiryStatus_t = c_uint8
+NVML_GRID_LICENSE_EXPIRY_NOT_AVAILABLE    = 0,   # Expiry information not available
+NVML_GRID_LICENSE_EXPIRY_INVALID          = 1,   # Invalid expiry or error fetching expiry
+NVML_GRID_LICENSE_EXPIRY_VALID            = 2,   # Valid expiry
+NVML_GRID_LICENSE_EXPIRY_NOT_APPLICABLE   = 3,   # Expiry not applicable
+NVML_GRID_LICENSE_EXPIRY_PERMANENT        = 4,   # Permanent expiry
+
 _nvmlVgpuGuestInfoState_t = c_uint
 NVML_VGPU_INSTANCE_GUEST_INFO_STATE_UNINITIALIZED = 0
 NVML_VGPU_INSTANCE_GUEST_INFO_STATE_INITIALIZED   = 1
@@ -917,7 +939,7 @@ class nvmlPciInfo_t(_PrintableStructure):
             'pciSubSystemId' : "0x%08X",
             }
 
-class c_nvmlBlacklistDeviceInfo_t(_PrintableStructure):
+class c_nvmlExcludedDeviceInfo_t(_PrintableStructure):
     _fields_ = [
         ('pci', nvmlPciInfo_t),
         ('uuid', c_char * NVML_DEVICE_UUID_BUFFER_SIZE)
@@ -944,6 +966,17 @@ class c_nvmlBAR1Memory_t(_PrintableStructure):
         ('bar1Used', c_ulonglong),
     ]
     _fmt_ = {'<default>': "%d B"}
+
+class nvmlClkMonFaultInfo_t(Structure):
+    _fields_ = [("clkApiDomain", c_uint),
+                ("clkDomainFaultMask", c_uint)
+    ]
+
+class nvmlClkMonStatus_t(Structure):
+    _fields_ = [("bGlobalStatus", c_uint),
+                ("clkMonListSize", c_uint),
+                ("clkMonList", nvmlClkMonFaultInfo_t)
+    ]
 
 # On Windows with the WDDM driver, usedGpuMemory is reported as None
 # Code that processes this structure should check for None, I.E.
@@ -1053,6 +1086,23 @@ class c_nvmlVgpuProcessUtilizationSample_t(_PrintableStructure):
         ('decUtil', c_uint),
     ]
 
+class c_nvmlVgpuLicenseExpiry_t(_PrintableStructure):
+    _fields_ = [
+        ('year',    c_uint32),
+        ('month',   c_uint16),
+        ('day',     c_uint16),
+        ('hour',    c_uint16),
+        ('min',     c_uint16),
+        ('sec',     c_uint16),
+        ('status',  c_uint8),
+    ]
+
+class c_nvmlVgpuLicenseInfo_t(_PrintableStructure):
+    _fields_ = [
+        ('isLicensed',      c_uint8),
+        ('licenseExpiry',   c_nvmlVgpuLicenseExpiry_t),
+    ]
+
 class c_nvmlEncoderSession_t(_PrintableStructure):
     _fields_ = [
         ('sessionId', c_uint),
@@ -1073,6 +1123,34 @@ class c_nvmlProcessUtilizationSample_t(_PrintableStructure):
         ('memUtil', c_uint),
         ('encUtil', c_uint),
         ('decUtil', c_uint),
+    ]
+
+class c_nvmlGridLicenseExpiry_t(_PrintableStructure):
+    _fields_ = [
+        ('year',    c_uint32),
+        ('month',   c_uint16),
+        ('day',     c_uint16),
+        ('hour',    c_uint16),
+        ('min',     c_uint16),
+        ('sec',     c_uint16),
+        ('status',  c_uint8),
+    ]
+
+class c_nvmlGridLicensableFeature_v4_t(_PrintableStructure):
+    _fields_ = [
+        ('featureCode',    _nvmlGridLicenseFeatureCode_t),
+        ('featureState',   c_uint),
+        ('licenseInfo',    c_char * NVML_GRID_LICENSE_BUFFER_SIZE),
+        ('productName',    c_char * NVML_GRID_LICENSE_BUFFER_SIZE),
+        ('featureEnabled', c_uint),
+        ('licenseExpiry',  c_nvmlGridLicenseExpiry_t),
+    ]
+
+class c_nvmlGridLicensableFeatures_v4_t(_PrintableStructure):
+    _fields_ = [
+        ('isGridLicenseSupported',  c_int),
+        ('licensableFeaturesCount', c_uint),
+        ('gridLicensableFeatures',  c_nvmlGridLicensableFeature_v4_t * NVML_GRID_LICENSE_FEATURE_MAX_COUNT),
     ]
 
 class c_nvmlGridLicensableFeature_v3_t(_PrintableStructure):
@@ -1249,14 +1327,15 @@ class c_nvmlFBCSession_t(_PrintableStructure):
 NVML_DEVICE_MIG_DISABLE = 0x0
 NVML_DEVICE_MIG_ENABLE  = 0x1
 
-NVML_GPU_INSTANCE_PROFILE_1_SLICE = 0x0
-NVML_GPU_INSTANCE_PROFILE_2_SLICE = 0x1
-NVML_GPU_INSTANCE_PROFILE_3_SLICE = 0x2
-NVML_GPU_INSTANCE_PROFILE_4_SLICE = 0x3
-NVML_GPU_INSTANCE_PROFILE_7_SLICE = 0x4
-NVML_GPU_INSTANCE_PROFILE_8_SLICE = 0x5
-NVML_GPU_INSTANCE_PROFILE_6_SLICE = 0x6
-NVML_GPU_INSTANCE_PROFILE_COUNT   = 0x7
+NVML_GPU_INSTANCE_PROFILE_1_SLICE      = 0x0
+NVML_GPU_INSTANCE_PROFILE_2_SLICE      = 0x1
+NVML_GPU_INSTANCE_PROFILE_3_SLICE      = 0x2
+NVML_GPU_INSTANCE_PROFILE_4_SLICE      = 0x3
+NVML_GPU_INSTANCE_PROFILE_7_SLICE      = 0x4
+NVML_GPU_INSTANCE_PROFILE_8_SLICE      = 0x5
+NVML_GPU_INSTANCE_PROFILE_6_SLICE      = 0x6
+NVML_GPU_INSTANCE_PROFILE_1_SLICE_REV1 = 0x7
+NVML_GPU_INSTANCE_PROFILE_COUNT        = 0x8
 
 class c_nvmlGpuInstancePlacement_t(Structure):
     _fields_ = [("start", c_uint),
@@ -2180,6 +2259,43 @@ def nvmlDeviceGetGraphicsRunningProcesses_v2(handle):
 def nvmlDeviceGetGraphicsRunningProcesses(handle):
     return nvmlDeviceGetGraphicsRunningProcesses_v2(handle)
 
+def nvmlDeviceGetMPSComputeRunningProcesses(handle):
+    return nvmlDeviceGetMPSComputeRunningProcesses_v2(handle)
+
+def nvmlDeviceGetMPSComputeRunningProcesses_v2(handle):
+    # first call to get the size
+    c_count = c_uint(0)
+    fn = _nvmlGetFunctionPointer("nvmlDeviceGetMPSComputeRunningProcesses_v2")
+    ret = fn(handle, byref(c_count), None)
+
+    if (ret == NVML_SUCCESS):
+        # special case, no running processes
+        return []
+    elif (ret == NVML_ERROR_INSUFFICIENT_SIZE):
+        # typical case
+        # oversize the array incase more processes are created
+        c_count.value = c_count.value * 2 + 5
+        proc_array = c_nvmlProcessInfo_t * c_count.value
+        c_procs = proc_array()
+
+        # make the call again
+        ret = fn(handle, byref(c_count), c_procs)
+        _nvmlCheckReturn(ret)
+
+        procs = []
+        for i in range(c_count.value):
+            # use an alternative struct for this object
+            obj = nvmlStructToFriendlyObject(c_procs[i])
+            if (obj.usedGpuMemory == NVML_VALUE_NOT_AVAILABLE_ulonglong.value):
+                # special case for WDDM on Windows, see comment above
+                obj.usedGpuMemory = None
+            procs.append(obj)
+
+        return procs
+    else:
+        # error case
+        raise NVMLError(ret)
+
 def nvmlDeviceGetAutoBoostedClocksEnabled(handle):
     c_isEnabled = _nvmlEnableState_t()
     c_defaultIsEnabled = _nvmlEnableState_t()
@@ -2251,6 +2367,23 @@ def nvmlDeviceResetGpuLockedClocks(handle):
     ret = fn(handle)
     _nvmlCheckReturn(ret)
     return None
+
+def nvmlDeviceSetMemoryLockedClocks(handle, minMemClockMHz, maxMemClockMHz):
+    fn = _nvmlGetFunctionPointer("nvmlDeviceSetMemoryLockedClocks")
+    ret = fn(handle, c_uint(minMemClockMHz), c_uint(maxMemClockMHz))
+    _nvmlCheckReturn(ret)
+    return None
+
+def nvmlDeviceResetMemoryLockedClocks(handle):
+    fn = _nvmlGetFunctionPointer("nvmlDeviceResetMemoryLockedClocks")
+    ret = fn(handle)
+    _nvmlCheckReturn(ret)
+    return None
+
+def nvmlDeviceGetClkMonStatus(handle, c_clkMonInfo):
+    fn = _nvmlGetFunctionPointer("nvmlDeviceGetClkMonStatus")
+    ret = fn(handle, c_clkMonInfo)
+    return ret
 
 # Added in 4.304
 def nvmlDeviceSetApplicationsClocks(handle, maxMemClockMHz, maxGraphicsClockMHz):
@@ -2642,6 +2775,13 @@ def nvmlDeviceGetNvLinkRemotePciInfo(device, link):
     _nvmlCheckReturn(ret)
     return c_pci
 
+def nvmlDeviceGetNvLinkRemoteDeviceType(handle, link):
+    c_type = _nvmlNvLinkDeviceType_t()
+    fn = _nvmlGetFunctionPointer("nvmlDeviceGetNvLinkRemoteDeviceType")
+    ret = fn(handle, link, byref(c_type))
+    _nvmlCheckReturn(ret)
+    return c_type.value
+
 def nvmlDeviceGetNvLinkState(device, link):
     c_isActive = c_uint()
     fn = _nvmlGetFunctionPointer("nvmlDeviceGetNvLinkState")
@@ -2908,6 +3048,13 @@ def nvmlVgpuInstanceGetLicenseStatus(vgpuInstance):
     _nvmlCheckReturn(ret)
     return c_license_status.value
 
+def nvmlVgpuInstanceGetLicenseInfo(vgpuInstance):
+    fn  = _nvmlGetFunctionPointer("nvmlVgpuInstanceGetLicenseInfo")
+    c_license_info = c_nvmlVgpuLicenseInfo_t()
+    ret = fn(vgpuInstance, byref(c_license_info))
+    _nvmlCheckReturn(ret)
+    return c_license_info
+
 def nvmlVgpuInstanceGetFrameRateLimit(vgpuInstance):
     c_frl = c_uint(0)
     fn  = _nvmlGetFunctionPointer("nvmlVgpuInstanceGetFrameRateLimit")
@@ -2987,16 +3134,16 @@ def nvmlDeviceGetP2PStatus(device1, device2, p2pIndex):
     _nvmlCheckReturn(ret)
     return c_p2pstatus.value
 
-def nvmlDeviceGetGridLicensableFeatures_v3(handle):
-    c_get_grid_licensable_features = c_nvmlGridLicensableFeatures_v3_t()
-    fn = _nvmlGetFunctionPointer("nvmlDeviceGetGridLicensableFeatures_v3")
+def nvmlDeviceGetGridLicensableFeatures_v4(handle):
+    c_get_grid_licensable_features = c_nvmlGridLicensableFeatures_v4_t()
+    fn = _nvmlGetFunctionPointer("nvmlDeviceGetGridLicensableFeatures_v4")
     ret = fn(handle, byref(c_get_grid_licensable_features))
     _nvmlCheckReturn(ret)
 
     return (c_get_grid_licensable_features)
 
 def nvmlDeviceGetGridLicensableFeatures(handle):
-    return nvmlDeviceGetGridLicensableFeatures_v3(handle)
+    return nvmlDeviceGetGridLicensableFeatures_v4(handle)
 
 def nvmlDeviceGetEncoderCapacity(handle, encoderQueryType):
     c_encoder_capacity = c_ulonglong(0)
@@ -3284,17 +3431,17 @@ def nvmlVgpuInstanceClearAccountingPids(vgpuInstance):
     _nvmlCheckReturn(ret)
     return ret
 
-def nvmlGetBlacklistDeviceCount():
+def nvmlGetExcludedDeviceCount():
     c_count = c_uint()
-    fn = _nvmlGetFunctionPointer("nvmlGetBlacklistDeviceCount")
+    fn = _nvmlGetFunctionPointer("nvmlGetExcludedDeviceCount")
     ret = fn(byref(c_count))
     _nvmlCheckReturn(ret)
     return c_count.value
 
-def nvmlGetBlacklistDeviceInfoByIndex(index):
+def nvmlGetExcludedDeviceInfoByIndex(index):
     c_index = c_uint(index)
-    info = c_nvmlBlacklistDeviceInfo_t()
-    fn = _nvmlGetFunctionPointer("nvmlGetBlacklistDeviceInfoByIndex")
+    info = c_nvmlExcludedDeviceInfo_t()
+    fn = _nvmlGetFunctionPointer("nvmlGetExcludedDeviceInfoByIndex")
     ret = fn(c_index, byref(info))
     _nvmlCheckReturn(ret)
     return info
@@ -3336,7 +3483,7 @@ def nvmlDeviceGetGpuInstanceRemainingCapacity(device, profileId):
     return c_count.value
 
 def nvmlDeviceGetGpuInstancePossiblePlacements(device, profileId, placementsRef, countRef):
-    fn = _nvmlGetFunctionPointer("nvmlDeviceGetGpuInstancePossiblePlacements")
+    fn = _nvmlGetFunctionPointer("nvmlDeviceGetGpuInstancePossiblePlacements_v2")
     ret = fn(device, profileId, placementsRef, countRef)
     _nvmlCheckReturn(ret)
     return ret
@@ -3507,3 +3654,18 @@ def nvmlDeviceGetArchitecture(device):
     ret = fn(device, byref(arch))
     _nvmlCheckReturn(ret)
     return arch.value
+
+def nvmlDeviceGetBusType(device):
+    c_busType = _nvmlBusType_t()
+    fn = _nvmlGetFunctionPointer("nvmlDeviceGetBusType")
+    ret = fn(device, byref(c_busType))
+    _nvmlCheckReturn(ret)
+    return c_busType.value
+
+def nvmlDeviceGetIrqNum(device):
+    c_irqNum = c_uint()
+    fn = _nvmlGetFunctionPointer("nvmlDeviceGetIrqNum")
+    ret = fn(device, byref(c_irqNum))
+    _nvmlCheckReturn(ret)
+    return c_irqNum.value
+

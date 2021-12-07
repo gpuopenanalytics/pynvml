@@ -353,6 +353,17 @@ NVSMI_BRAND_NAMES = {NVML_BRAND_UNKNOWN :  "Unknown",
                      NVML_BRAND_NVS     :  "NVS",
                      NVML_BRAND_GRID    :  "Grid",
                      NVML_BRAND_GEFORCE :  "GeForce",
+                     NVML_BRAND_TITAN   :  "Titan",
+                     NVML_BRAND_NVIDIA_VAPPS : "NVIDIA Virtual Applications",
+                     NVML_BRAND_NVIDIA_VPC   : "NVIDIA Virtual PC",
+                     NVML_BRAND_NVIDIA_VCS   : "NVIDIA Virtual Compute Server",
+                     NVML_BRAND_NVIDIA_VWS   : "NVIDIA RTX Virtual Workstation",
+                     NVML_BRAND_NVIDIA_VGAMING : "NVIDIA vGaming",
+                     NVML_BRAND_QUADRO_RTX     : "Quadro RTX",
+                     NVML_BRAND_NVIDIA_RTX     : "NVIDIA RTX",
+                     NVML_BRAND_NVIDIA         : "NVIDIA",
+                     NVML_BRAND_GEFORCE_RTX    : "Geforce RTX",
+                     NVML_BRAND_TITAN_RTX      : "Titan RTX",
 }
 
 ## ========================================================================== ##
