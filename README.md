@@ -203,4 +203,4 @@ Release Notes
 -   Version 11.4.0
     - Updated nvml.py to CUDA 11.4
     - Updated smi.py NVML_BRAND_NAMES
-    - Aligned nvml.py with latest nvidia-ml-py deployment
+    - Aligned nvml.py with latest nvidia-ml-py deployment (11.495.46)
