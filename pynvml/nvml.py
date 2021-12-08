@@ -326,9 +326,9 @@ NVML_TOPOLOGY_CPU = NVML_TOPOLOGY_NODE
 NVML_TOPOLOGY_SYSTEM = 50
 
 _nvmlGpuP2PCapsIndex_t = c_uint
-NVML_P2P_CAPS_INDEX_READ = 0,
+NVML_P2P_CAPS_INDEX_READ = 0
 NVML_P2P_CAPS_INDEX_WRITE = 1
-NVML_P2P_CAPS_INDEX_NVLINK =2
+NVML_P2P_CAPS_INDEX_NVLINK = 2
 NVML_P2P_CAPS_INDEX_ATOMICS = 3
 NVML_P2P_CAPS_INDEX_PROP = 4
 NVML_P2P_CAPS_INDEX_LOOPBACK = 5
@@ -654,11 +654,11 @@ NVML_GRID_LICENSE_FEATURE_CODE_GAMING       = 3
 NVML_GRID_LICENSE_FEATURE_CODE_COMPUTE      = 4
 
 _nvmlGridLicenseExpiryStatus_t = c_uint8
-NVML_GRID_LICENSE_EXPIRY_NOT_AVAILABLE    = 0,   # Expiry information not available
-NVML_GRID_LICENSE_EXPIRY_INVALID          = 1,   # Invalid expiry or error fetching expiry
-NVML_GRID_LICENSE_EXPIRY_VALID            = 2,   # Valid expiry
-NVML_GRID_LICENSE_EXPIRY_NOT_APPLICABLE   = 3,   # Expiry not applicable
-NVML_GRID_LICENSE_EXPIRY_PERMANENT        = 4,   # Permanent expiry
+NVML_GRID_LICENSE_EXPIRY_NOT_AVAILABLE    = 0   # Expiry information not available
+NVML_GRID_LICENSE_EXPIRY_INVALID          = 1   # Invalid expiry or error fetching expiry
+NVML_GRID_LICENSE_EXPIRY_VALID            = 2   # Valid expiry
+NVML_GRID_LICENSE_EXPIRY_NOT_APPLICABLE   = 3   # Expiry not applicable
+NVML_GRID_LICENSE_EXPIRY_PERMANENT        = 4   # Permanent expiry
 
 _nvmlVgpuGuestInfoState_t = c_uint
 NVML_VGPU_INSTANCE_GUEST_INFO_STATE_UNINITIALIZED = 0
