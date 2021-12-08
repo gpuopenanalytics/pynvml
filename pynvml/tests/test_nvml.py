@@ -24,7 +24,11 @@ def nvml(request):
 # Fixture to check driver version
 @pytest.fixture(scope="module")
 def driver(request):
-    return float(pynvml.nvmlSystemGetDriverVersion())
+    driver_vsn = pynvml.nvmlSystemGetDriverVersion()
+    if isinstance(driver_vsn, bytes):
+        driver_vsn = driver_vsn.decode("utf-8")
+    # Return "major" version only
+    return int(driver_vsn.split(".")[0])
 
 
 # Get GPU count
