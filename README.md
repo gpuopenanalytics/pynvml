@@ -204,3 +204,5 @@ Release Notes
     - Updated nvml.py to CUDA 11.4
     - Updated smi.py NVML_BRAND_NAMES
     - Aligned nvml.py with latest nvidia-ml-py deployment (11.495.46)
+-   Version 11.4.1
+    - Fix comma bugs in nvml.py
