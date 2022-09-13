@@ -19,7 +19,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 setup(name='pynvml',
       version=versioneer.get_version(),
       cmdclass=versioneer.get_cmdclass(),
-      python_requires='>=3.6',
+      python_requires='>=2.7',
       description='Python Bindings for the NVIDIA Management Library',
       long_description=long_description,
       long_description_content_type='text/markdown',

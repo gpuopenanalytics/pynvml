@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from pynvml.smi import nvidia_smi
 import pytest
 import os
@@ -57,4 +59,4 @@ def test_temperature(ngpus, smi):
         max_temp = smi.DeviceQuery("temperature.gpu")["gpu"][i]["temperature"][
             "gpu_temp_max_threshold"
         ]
-        assert (temp > 0) and (temp < max_temp)
+        assert temp == 'N/A' or ((temp > 0) and (temp < max_temp))
