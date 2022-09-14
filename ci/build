@@ -1,0 +1,21 @@
+#!/bin/bash
+# run this file from the repository root
+set -ex
+
+export DOCKER_BUILDKIT=1
+mkdir -p dist
+
+# Build
+docker build \
+    --progress=plain \
+    --target pynvml-build \
+    --tag pynvml-build \
+    --file ci/Dockerfile \
+    .
+
+# Test and export wheel
+docker run \
+    --rm \
+    --gpus all \
+    --mount type=bind,source="$(pwd)"/dist,target=/sandbox/dist \
+    pynvml-build
