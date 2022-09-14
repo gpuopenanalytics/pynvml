@@ -11,8 +11,11 @@ NVML_PCIE_UTIL_RX_BYTES = pynvml.NVML_PCIE_UTIL_RX_BYTES
 NVML_PCIE_UTIL_COUNT = pynvml.NVML_PCIE_UTIL_COUNT
 
 XFAIL_LEGACY_NVLINK_MSG = "Legacy NVLink test expected to fail."
-XFAIL_SINGLE_GPU = "Cannot run test on single GPU"
-XFAIL_VPGU = "Not available on vGPU"
+XFAIL_450_REQUIRED = "Not available on driver versions < 450."
+XFAIL_SINGLE_GPU = "Cannot run test on single GPU."
+XFAIL_VPGU = "Not available on vGPU."
+XFAIL_UNSUPPORTED_HW = "Not supported on this hardware."
+
 
 # Fixture to initialize and finalize nvml
 @pytest.fixture(scope="module")
@@ -63,7 +66,9 @@ def handles(ngpus):
 
 # Get GPU MIG count
 @pytest.fixture
-def nmigs(handles):
+def nmigs(handles, driver):
+    if driver < 450.0:
+        pytest.xfail(XFAIL_450_REQUIRED)
     result = pynvml.nvmlDeviceGetMaxMigDeviceCount(handles[0])
     print("[" + str(result) + " MIGs]", end=" ")
     return result
@@ -81,9 +86,12 @@ def mig_handles(nmigs):
 def serials(ngpus, handles, is_vgpu):
     if is_vgpu:
         pytest.xfail(XFAIL_VPGU)
-    serials = [pynvml.nvmlDeviceGetSerial(handles[i]) for i in range(ngpus)]
-    assert len(serials) == ngpus
-    return serials
+    try:
+        serials = [pynvml.nvmlDeviceGetSerial(handles[i]) for i in range(ngpus)]
+        assert len(serials) == ngpus
+        return serials
+    except pynvml.NVMLError_NotSupported:
+        pytest.xfail(XFAIL_UNSUPPORTED_HW)
 
 
 @pytest.fixture
@@ -175,7 +183,9 @@ def test_nvmlDeviceGetHandleByPciBusId(ngpus, pci_info):
 @pytest.mark.parametrize(
     "scope", [pynvml.NVML_AFFINITY_SCOPE_NODE, pynvml.NVML_AFFINITY_SCOPE_SOCKET]
 )
-def test_nvmlDeviceGetMemoryAffinity(handles, scope):
+def test_nvmlDeviceGetMemoryAffinity(handles, scope, driver):
+    if driver < 450.0:
+        pytest.xfail(XFAIL_450_REQUIRED)
     size = 1024
     for handle in handles:
         nodeSet = pynvml.nvmlDeviceGetMemoryAffinity(handle, size, scope)
@@ -185,7 +195,9 @@ def test_nvmlDeviceGetMemoryAffinity(handles, scope):
 @pytest.mark.parametrize(
     "scope", [pynvml.NVML_AFFINITY_SCOPE_NODE, pynvml.NVML_AFFINITY_SCOPE_SOCKET]
 )
-def test_nvmlDeviceGetCpuAffinityWithinScope(handles, scope):
+def test_nvmlDeviceGetCpuAffinityWithinScope(handles, scope, driver):
+    if driver < 450.0:
+        pytest.xfail(XFAIL_450_REQUIRED)
     size = 1024
     for handle in handles:
         cpuSet = pynvml.nvmlDeviceGetCpuAffinityWithinScope(handle, size, scope)
