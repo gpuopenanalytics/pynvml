@@ -1,3 +1,22 @@
+Fork notes
+==========
+
+Changes from upstream:
+----------------------
+- support for python 2
+- additional tests
+- xfail tests on unsupported hardware or driver versions
+- build and test automation using Docker
+
+Build, test, export wheel:
+--------------------------
+Run `./ci/build` from repository root. If successful, wheel will be placed in `dist` directory.
+
+
+(upstream readme below)
+
+----
+
 Python bindings to the NVIDIA Management Library
 ================================================
 
