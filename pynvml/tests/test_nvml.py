@@ -248,8 +248,22 @@ def test_nvmlDeviceGetP2PStatus(handles, index):
 # [Skipping] pynvml.nvmlDeviceGetDefaultApplicationsClock
 # [Skipping] pynvml.nvmlDeviceGetSupportedMemoryClocks
 # [Skipping] pynvml.nvmlDeviceGetSupportedGraphicsClocks
-# [Skipping] pynvml.nvmlDeviceGetFanSpeed
-# [Skipping] pynvml.nvmlDeviceGetTemperature
+
+# Test pynvml.nvmlDeviceGetFanSpeed
+def test_nvmlDeviceGetFanSpeed(ngpus, handles):
+    for i in range(ngpus):
+        speed = pynvml.nvmlDeviceGetFanSpeed(handles[i])
+        assert speed >= 0
+
+
+# Test pynvml.nvmlDeviceGetTemperature
+def test_nvmlDeviceGetTemperature(ngpus, handles):
+    for i in range(ngpus):
+        temp = pynvml.nvmlDeviceGetTemperature(handles[i], pynvml.NVML_TEMPERATURE_GPU)
+        # Should not be freezing. Is that reasonable?
+        assert temp > 0
+
+
 # [Skipping] pynvml.nvmlDeviceGetTemperatureThreshold
 # [Skipping] pynvml.nvmlDeviceGetPowerState
 # [Skipping] pynvml.nvmlDeviceGetPerformanceState
