@@ -4,7 +4,7 @@
 # acceleration of Devito codes.
 #
 # BUILD: docker build --network=host --file docker/Dockerfile --tag pynvml .
-# RUN: docker run --gpus all --rm -it -p 8888:8888 -p 8787:8787 -p 8786:8786 pynvml
+# RUN: docker run --gpus all --rm -it  pynvml
 ##############################################################
 FROM python:3.6
 

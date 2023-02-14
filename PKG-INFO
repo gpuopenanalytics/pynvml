@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: nvidia-ml-py
-Version: 11.495.46
+Version: 11.525
 Summary: Python Bindings for the NVIDIA Management Library
 Home-page: http://www.nvidia.com/
 Author: NVIDIA Corporation
