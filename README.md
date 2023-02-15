@@ -206,11 +206,6 @@ Release Notes
     - Aligned nvml.py with latest nvidia-ml-py deployment (11.495.46)
 -   Version 11.4.1
     - Fix comma bugs in nvml.py
--   Version 11.515.48
-    - Updated nvml.py to CUDA 11.5
-    - Minor bug fixes
--   Version 11.520
-    - Added new functions for NVML 11.520
--   Version 11.525
-    - Updated nvml.py to CUDA 12
-    - Added new functions for NVML 11.525
+-   Version 11.5.0
+    - Updated nvml.py to support CUDA 11.5 and CUDA 12
+    - Aligned with latest nvidia-ml-py deployment (11.525.84)
