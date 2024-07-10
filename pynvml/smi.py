@@ -49,6 +49,7 @@ from pynvml.nvml import *
 import datetime
 import collections
 import time
+import warnings
 from threading import Thread
 
 ## ========================================================================== ##
@@ -56,6 +57,20 @@ from threading import Thread
 ##                              Enumerations                                  ##
 ##                                                                            ##
 ## ========================================================================== ##
+
+
+# Use loud FutureWarning to encourage migration to nvidia-ml-py
+warnings.warn(
+    """The installed pynvml package is unofficial and unmaintained!
+
+NVIDIA's official NVML bindings are publised under a different nvidia-ml-py
+project (see: https://pypi.org/project/nvidia-ml-py/). The official package
+does NOT include an `smi` module. Therefore, we strongly recommended the
+immediate removal of any code depending on `pynvml.smi`.
+""",
+    FutureWarning,
+)
+
 
 #Details and descriptions for enumerations in help_query_gpu.txt
 NVSMI_ALL = -1
