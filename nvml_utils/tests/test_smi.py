@@ -1,4 +1,4 @@
-from pynvml_utils import nvidia_smi
+from nvml_utils import nvidia_smi
 import pytest
 
 
