@@ -1,3 +1,9 @@
+> [!WARNING]
+> This package provides unofficial NVML bindings that are out of date!
+> The latest NVML bindings are published by NVIDIA under a different
+> `nvidia-ml-py` project (see: https://pypi.org/project/nvidia-ml-py/).
+> Please migrate to the official package for up-to-date NVML bindings.
+
 Python bindings to the NVIDIA Management Library
 ================================================
 
