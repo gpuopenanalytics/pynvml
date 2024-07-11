@@ -1,20 +1,30 @@
 > [!WARNING]
-> This package provides unofficial NVML bindings that are out of date!
-> The latest NVML bindings are published by NVIDIA under a different
+> This package includes unofficial NVML bindings and utilities.
+> This package is intended for demonstration purposes only. There
+> is no guarentee for long-term maintenence or support.
+>
+> The official NVML bindings are published by NVIDIA under a different
 > `nvidia-ml-py` project (see: https://pypi.org/project/nvidia-ml-py/).
-> Please migrate to the official package for up-to-date NVML bindings.
+>
+> Future releases of this project will not include NVML bindings
+> directly, but will instead depend on `nvidia-ml-py`.
+>
+> Please migrate to the official package for long-term support.
 
-Python bindings to the NVIDIA Management Library
-================================================
+Python bindings and utilities for the NVIDIA Management Library
+===============================================================
 
-Provides a Python interface to GPU management and monitoring functions.
+> [!IMPORTANT]
+> As of version 11.0.0, the NVML-wrappers used in pynvml are directly
+> copied from [nvidia-ml-py](https://pypi.org/project/nvidia-ml-py/).
+> In a future release, the local bindings will be removed, and 
+> `nvidia-ml-py` will become a required dependency.
 
-This is a wrapper around the NVML library.
+This project provides Python utilities and bindings for the
+NVIDIA Management Library (NVML).
+
 For information about the NVML library, see the NVML developer page
 http://developer.nvidia.com/nvidia-management-library-nvml
-
-As of version 11.0.0, the NVML-wrappers used in pynvml are identical
-to those published through [nvidia-ml-py](https://pypi.org/project/nvidia-ml-py/).
 
 Note that this file can be run with 'python -m doctest -v README.txt'
 although the results are system dependent
@@ -31,7 +41,7 @@ Installation
 Usage
 -----
 
-You can use the lower level nvml bindings
+You can use the lower level nvml bindings provided by `nvidia-ml-py`
 
 ```python
 >>> from pynvml import *
@@ -48,16 +58,16 @@ Device 0 : Tesla V100
 >>> nvmlShutdown()
 ```
 
-Or the higher level nvidia_smi API
+Or the higher level `nvidia_smi` API
 
 ```python
-from pynvml.smi import nvidia_smi
+from nvml_utilities import nvidia_smi
 nvsmi = nvidia_smi.getInstance()
 nvsmi.DeviceQuery('memory.free, memory.total')
 ```
 
 ```python
-from pynvml.smi import nvidia_smi
+from nvml_utilities import nvidia_smi
 nvsmi = nvidia_smi.getInstance()
 print(nvsmi.DeviceQuery('--help-query-gpu'), end='\n')
 ```
