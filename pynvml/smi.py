@@ -1,5 +1,5 @@
 # ============================================================================ #
-# Copyright (c) 2011-2019, NVIDIA Corporation.  All rights reserved.
+# Copyright (c) 2011-2021, NVIDIA Corporation.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -36,13 +36,13 @@ Each query parameter is documented within nvdia-smi --help-query-gpu
 From Code:
 DeviceQuery()
 DeviceQuery("--help")
-DeviceQuery("--help_query_gpu")
+DeviceQuery("--help-query-gpu")
 DeviceQuery("pci.bus_id,memory.total,memory.free")
 DeviceQuery([NVSMI_PCI_BUS_ID, NVSMI_MEMORY_TOTAL, NVSMI_MEMORY_FREE])
 
 XmlDeviceQuery()
 XmlDeviceQuery("--help")
-XmlDeviceQuery("--help_query_gpu")
+XmlDeviceQuery("--help-query-gpu")
 """
 
 from pynvml.nvml import *
@@ -136,28 +136,40 @@ NVSMI_ECC_ERROR_CORRECTED_VOLATILE_REGFILE = 81
 NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L1CACHE = 82
 NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L2CACHE = 83
 NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE = 84
-NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TOTAL = 85
+NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TOTAL   = 85
+NVSMI_ECC_ERROR_CORRECTED_VOLATILE_DRAM    = 86
+NVSMI_ECC_ERROR_CORRECTED_VOLATILE_SRAM    = 87
+NVSMI_ECC_ERROR_CORRECTED_VOLATILE_CBU     = 88
 
 NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DEV_MEM = 90
 NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_REGFILE = 91
 NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L1CACHE = 92
 NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L2CACHE = 93
 NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TEXTURE = 94
-NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TOTAL = 95
+NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TOTAL   = 95
+NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DRAM    = 96
+NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_CBU     = 97
+NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_SRAM    = 98
 
 NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_DEV_MEM = 100
 NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_REGFILE = 101
 NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_L1CACHE = 102
 NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_L2CACHE = 103
 NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TEXTURE = 104
-NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TOTAL = 105
+NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TOTAL   = 105
+NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_DRAM    = 106
+NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_CBU     = 107
+NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_SRAM    = 108
 
 NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_DEV_MEM = 110
 NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_REGFILE = 111
 NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_L1CACHE = 112
 NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_L2CACHE = 113
 NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TEXTURE = 114
-NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TOTAL = 115
+NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TOTAL   = 115
+NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_DRAM    = 116
+NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_CBU     = 117
+NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_SRAM    = 118
 
 NVSMI_RETIREDPAGES_SINGLE_BIT_ECC_COUNT = 120
 NVSMI_RETIREDPAGES_DOUBLE_BIT_ECC_COUNT = 121
@@ -203,134 +215,151 @@ NVSMI_ACCOUNTED_APPS = 201
 NVSMI_CLOCKS_POLICY = 202
 NVSMI_CLOCKS_SUPPORTED = 203
 
+NVSMI_MIG_MODE_CURRENT = 210
+NVSMI_MIG_MODE_PENDING = 211
+
 #Details and descriptions for enumerations in help_query_gpu.txt
 NVSMI_QUERY_GPU = {
-    "timestamp":NVSMI_TIMESTAMP,
-    "driver_version":NVSMI_DRIVER_VERSION,
-    "count":NVSMI_COUNT,
-    "name":NVSMI_NAME,
-    "gpu_name":NVSMI_NAME,
-    "serial":NVSMI_SERIALNUMBER,
-    "gpu_serial":NVSMI_SERIALNUMBER,
-    "uuid":NVSMI_UUID,
-    "gpu_uuid":NVSMI_UUID,
-    "pci.bus_id":NVSMI_PCI_BUS_ID,
-    "gpu_bus_id":NVSMI_PCI_BUS_ID,
-    "pci.domain":NVSMI_PCI_DOMAIN,
-    "pci.bus":NVSMI_PCI_BUS,
-    "pci.device":NVSMI_PCI_DEVICE,
-    "pci.device_id":NVSMI_PCI_DEVICE_ID,
-    "pci.sub_device_id":NVSMI_PCI_SUBDEVICE_ID,
-    "pcie.link.gen.current":NVSMI_PCI_LINK_GEN_CUR,
-    "pcie.link.gen.max":NVSMI_PCI_LINK_GEN_MAX,
-    "pcie.link.width.current":NVSMI_PCI_LINK_WIDTH_CUR,
-    "pcie.link.width.max":NVSMI_PCI_LINK_WIDTH_MAX,
-    "index":NVSMI_INDEX,
-    "display_mode":NVSMI_DISPLAY_MODE,
-    "display_active":NVSMI_DISPLAY_ACTIVE,
-    "persistence_mode":NVSMI_PERSISTENCE_MODE,
-    "accounting.mode":NVSMI_ACCT_MODE,
-    "accounting.buffer_size":NVSMI_ACCT_BUFFER_SIZE,
-    "driver_model.current":NVSMI_DRIVER_MODEL_CUR,
-    "driver_model.pending":NVSMI_DRIVER_MODEL_PENDING,
-    "vbios_version":NVSMI_VBIOS_VER,
-    "inforom.img":NVSMI_INFOROM_IMG,
-    "inforom.image":NVSMI_INFOROM_IMG,
-    "inforom.oem":NVSMI_INFOROM_OEM,
-    "inforom.ecc":NVSMI_INFOROM_ECC,
-    "inforom.pwr":NVSMI_INFOROM_PWR,
-    "inforom.power":NVSMI_INFOROM_PWR,
-    "gom.current":NVSMI_GOM_CUR,
-    "gpu_operation_mode.current":NVSMI_GOM_CUR,
-    "gom.pending":NVSMI_GOM_PENDING,
-    "gpu_operation_mode.pending":NVSMI_GOM_PENDING,
-    "fan.speed":NVSMI_FAN_SPEED,
-    "pstate":NVSMI_PSTATE,
-    "clocks_throttle_reasons.supported":NVSMI_CLOCK_THROTTLE_REASONS_SUPPORTED,
-    "clocks_throttle_reasons.active":NVSMI_CLOCK_THROTTLE_REASONS_ACTIVE,
-    "clocks_throttle_reasons.gpu_idle":NVSMI_CLOCK_THROTTLE_REASONS_IDLE,
-    "clocks_throttle_reasons.applications_clocks_setting":NVSMI_CLOCK_THROTTLE_REASONS_APP_SETTING,
-    "clocks_throttle_reasons.sw_power_cap":NVSMI_CLOCK_THROTTLE_REASONS_SW_PWR_CAP,
-    "clocks_throttle_reasons.hw_slowdown":NVSMI_CLOCK_THROTTLE_REASONS_HW_SLOWDOWN,
-    "clocks_throttle_reasons.hw_thermal_slowdown":NVSMI_CLOCK_THROTTLE_REASONS_HW_THERMAL_SLOWDOWN,
-    "clocks_throttle_reasons.hw_power_brake_slowdown":NVSMI_CLOCK_THROTTLE_REASONS_HW_PWR_BRAKE_SLOWDOWN,
-    "clocks_throttle_reasons.sw_thermal_slowdown":NVSMI_CLOCK_THROTTLE_REASONS_SW_THERMAL_SLOWDOWN,
-    "clocks_throttle_reasons.sync_boost":NVSMI_CLOCK_THROTTLE_REASONS_SYNC_BOOST,
-    "memory.total":NVSMI_MEMORY_TOTAL,
-    "memory.used":NVSMI_MEMORY_USED,
-    "memory.free":NVSMI_MEMORY_FREE,
-    "compute_mode":NVSMI_COMPUTE_MODE,
-    "utilization.gpu":NVSMI_UTILIZATION_GPU,
-    "utilization.memory":NVSMI_UTILIZATION_MEM,
-    "encoder.stats.sessionCount":NVSMI_ENCODER_STATS_SESSIONCOUNT,
-    "encoder.stats.averageFps":NVSMI_ENCODER_STATS_AVG_EPS,
-    "encoder.stats.averageLatency":NVSMI_ENCODER_STATS_AVG_LATENCY,
-    "ecc.mode.current":NVSMI_ECC_MODE_CUR,
-    "ecc.mode.pending":NVSMI_ECC_MODE_PENDING,
-    "ecc.errors.corrected.volatile.device_memory":NVSMI_ECC_ERROR_CORRECTED_VOLATILE_DEV_MEM,
-    "ecc.errors.corrected.volatile.register_file":NVSMI_ECC_ERROR_CORRECTED_VOLATILE_REGFILE,
-    "ecc.errors.corrected.volatile.l1_cache":NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L1CACHE,
-    "ecc.errors.corrected.volatile.l2_cache":NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L2CACHE,
-    "ecc.errors.corrected.volatile.texture_memory":NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE,
-    "ecc.errors.corrected.volatile.total":NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TOTAL,
-    "ecc.errors.corrected.aggregate.device_memory":NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DEV_MEM,
-    "ecc.errors.corrected.aggregate.register_file":NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_REGFILE,
-    "ecc.errors.corrected.aggregate.l1_cache":NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L1CACHE,
-    "ecc.errors.corrected.aggregate.l2_cache":NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L2CACHE,
-    "ecc.errors.corrected.aggregate.texture_memory":NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TEXTURE,
-    "ecc.errors.corrected.aggregate.total":NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TOTAL,
-    "ecc.errors.uncorrected.volatile.device_memory":NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_DEV_MEM,
-    "ecc.errors.uncorrected.volatile.register_file":NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_REGFILE,
-    "ecc.errors.uncorrected.volatile.l1_cache":NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_L1CACHE,
-    "ecc.errors.uncorrected.volatile.l2_cache":NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_L2CACHE,
-    "ecc.errors.uncorrected.volatile.texture_memory":NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TEXTURE,
-    "ecc.errors.uncorrected.volatile.total":NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TOTAL,
-    "ecc.errors.uncorrected.aggregate.device_memory":NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_DEV_MEM,
-    "ecc.errors.uncorrected.aggregate.register_file":NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_REGFILE,
-    "ecc.errors.uncorrected.aggregate.l1_cache":NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_L1CACHE,
-    "ecc.errors.uncorrected.aggregate.l2_cache":NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_L2CACHE,
-    "ecc.errors.uncorrected.aggregate.texture_memory":NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TEXTURE,
-    "ecc.errors.uncorrected.aggregate.total":NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TOTAL,
-    "retired_pages.single_bit_ecc.count":NVSMI_RETIREDPAGES_SINGLE_BIT_ECC_COUNT,
-    "retired_pages.sbe":NVSMI_RETIREDPAGES_SINGLE_BIT_ECC_COUNT,
-    "retired_pages.double_bit.count":NVSMI_RETIREDPAGES_DOUBLE_BIT_ECC_COUNT,
-    "retired_pages.dbe":NVSMI_RETIREDPAGES_DOUBLE_BIT_ECC_COUNT,
-    "retired_pages.pending":NVSMI_RETIREDPAGES_PENDING,
-    "temperature.gpu":NVSMI_TEMPERATURE_GPU,
-    "temperature.memory":NVSMI_TEMPERATURE_MEMORY,
-    "power.management":NVSMI_POWER_MGMT,
-    "power.draw":NVSMI_POWER_DRAW,
-    "power.limit":NVSMI_POWER_LIMIT,
-    "enforced.power.limit":NVSMI_POWER_LIMIT_ENFORCED,
-    "power.default_limit":NVSMI_POWER_LIMIT_DEFAULT,
-    "power.min_limit":NVSMI_POWER_LIMIT_MIN,
-    "power.max_limit":NVSMI_POWER_LIMIT_MAX,
-    "clocks.current.graphics":NVSMI_CLOCKS_GRAPHICS_CUR,
-    "clocks.gr":NVSMI_CLOCKS_GRAPHICS_CUR,
-    "clocks.current.sm":NVSMI_CLOCKS_SM_CUR,
-    "clocks.sm":NVSMI_CLOCKS_SM_CUR,
-    "clocks.current.memory":NVSMI_CLOCKS_MEMORY_CUR,
-    "clocks.mem":NVSMI_CLOCKS_MEMORY_CUR,
-    "clocks.current.video":NVSMI_CLOCKS_VIDEO_CUR,
-    "clocks.video":NVSMI_CLOCKS_VIDEO_CUR,
-    "clocks.applications.graphics":NVSMI_CLOCKS_APPL_GRAPHICS,
-    "clocks.applications.gr":NVSMI_CLOCKS_APPL_GRAPHICS,
-    "clocks.applications.memory":NVSMI_CLOCKS_APPL_MEMORY,
-    "clocks.applications.mem":NVSMI_CLOCKS_APPL_MEMORY,
-    "clocks.default_applications.graphics":NVSMI_CLOCKS_APPL_GRAPHICS_DEFAULT,
-    "clocks.default_applications.gr":NVSMI_CLOCKS_APPL_GRAPHICS_DEFAULT,
-    "clocks.default_applications.memory":NVSMI_CLOCKS_APPL_MEMORY_DEFAULT,
-    "clocks.default_applications.mem":NVSMI_CLOCKS_APPL_MEMORY_DEFAULT,
-    "clocks.max.graphics":NVSMI_CLOCKS_GRAPHICS_MAX,
-    "clocks.max.gr":NVSMI_CLOCKS_GRAPHICS_MAX,
-    "clocks.max.sm":NVSMI_CLOCKS_SM_MAX,
-    "clocks.max.sm":NVSMI_CLOCKS_SM_MAX,
-    "clocks.max.memory":NVSMI_CLOCKS_MEMORY_MAX,
-    "clocks.max.mem":NVSMI_CLOCKS_MEMORY_MAX,
-    "supported-clocks":NVSMI_CLOCKS_SUPPORTED,
-    "compute-apps":NVSMI_COMPUTE_APPS,
-    "accounted-apps":NVSMI_ACCOUNTED_APPS,
-    "clocks":NVSMI_CLOCKS_POLICY,
+    "timestamp" : NVSMI_TIMESTAMP,
+    "driver_version" : NVSMI_DRIVER_VERSION,
+    "count" : NVSMI_COUNT,
+    "name" : NVSMI_NAME,
+    "gpu_name" : NVSMI_NAME,
+    "serial" : NVSMI_SERIALNUMBER,
+    "gpu_serial" : NVSMI_SERIALNUMBER,
+    "uuid" : NVSMI_UUID,
+    "gpu_uuid" : NVSMI_UUID,
+    "pci.bus_id" : NVSMI_PCI_BUS_ID,
+    "gpu_bus_id" : NVSMI_PCI_BUS_ID,
+    "pci.domain" : NVSMI_PCI_DOMAIN,
+    "pci.bus" : NVSMI_PCI_BUS,
+    "pci.device" : NVSMI_PCI_DEVICE,
+    "pci.device_id" : NVSMI_PCI_DEVICE_ID,
+    "pci.sub_device_id" : NVSMI_PCI_SUBDEVICE_ID,
+    "pcie.link.gen.current" : NVSMI_PCI_LINK_GEN_CUR,
+    "pcie.link.gen.max" : NVSMI_PCI_LINK_GEN_MAX,
+    "pcie.link.width.current" : NVSMI_PCI_LINK_WIDTH_CUR,
+    "pcie.link.width.max" : NVSMI_PCI_LINK_WIDTH_MAX,
+    "index" : NVSMI_INDEX,
+    "display_mode" : NVSMI_DISPLAY_MODE,
+    "display_active" : NVSMI_DISPLAY_ACTIVE,
+    "persistence_mode" : NVSMI_PERSISTENCE_MODE,
+    "accounting.mode" : NVSMI_ACCT_MODE,
+    "accounting.buffer_size" : NVSMI_ACCT_BUFFER_SIZE,
+    "driver_model.current" : NVSMI_DRIVER_MODEL_CUR,
+    "driver_model.pending" : NVSMI_DRIVER_MODEL_PENDING,
+    "vbios_version" : NVSMI_VBIOS_VER,
+    "inforom.img" : NVSMI_INFOROM_IMG,
+    "inforom.image" : NVSMI_INFOROM_IMG,
+    "inforom.oem" : NVSMI_INFOROM_OEM,
+    "inforom.ecc" : NVSMI_INFOROM_ECC,
+    "inforom.pwr" : NVSMI_INFOROM_PWR,
+    "inforom.power" : NVSMI_INFOROM_PWR,
+    "gom.current" : NVSMI_GOM_CUR,
+    "gpu_operation_mode.current" : NVSMI_GOM_CUR,
+    "gom.pending" : NVSMI_GOM_PENDING,
+    "gpu_operation_mode.pending" : NVSMI_GOM_PENDING,
+    "fan.speed" : NVSMI_FAN_SPEED,
+    "pstate" : NVSMI_PSTATE,
+    "clocks_throttle_reasons.supported" : NVSMI_CLOCK_THROTTLE_REASONS_SUPPORTED,
+    "clocks_throttle_reasons.active" : NVSMI_CLOCK_THROTTLE_REASONS_ACTIVE,
+    "clocks_throttle_reasons.gpu_idle" : NVSMI_CLOCK_THROTTLE_REASONS_IDLE,
+    "clocks_throttle_reasons.applications_clocks_setting" : NVSMI_CLOCK_THROTTLE_REASONS_APP_SETTING,
+    "clocks_throttle_reasons.sw_power_cap" : NVSMI_CLOCK_THROTTLE_REASONS_SW_PWR_CAP,
+    "clocks_throttle_reasons.hw_slowdown" : NVSMI_CLOCK_THROTTLE_REASONS_HW_SLOWDOWN,
+    "clocks_throttle_reasons.hw_thermal_slowdown" : NVSMI_CLOCK_THROTTLE_REASONS_HW_THERMAL_SLOWDOWN,
+    "clocks_throttle_reasons.hw_power_brake_slowdown" : NVSMI_CLOCK_THROTTLE_REASONS_HW_PWR_BRAKE_SLOWDOWN,
+    "clocks_throttle_reasons.sw_thermal_slowdown" : NVSMI_CLOCK_THROTTLE_REASONS_SW_THERMAL_SLOWDOWN,
+    "clocks_throttle_reasons.sync_boost" : NVSMI_CLOCK_THROTTLE_REASONS_SYNC_BOOST,
+    "memory.total" : NVSMI_MEMORY_TOTAL,
+    "memory.used" : NVSMI_MEMORY_USED,
+    "memory.free" : NVSMI_MEMORY_FREE,
+    "compute_mode" : NVSMI_COMPUTE_MODE,
+    "utilization.gpu" : NVSMI_UTILIZATION_GPU,
+    "utilization.memory" : NVSMI_UTILIZATION_MEM,
+    "encoder.stats.sessionCount" : NVSMI_ENCODER_STATS_SESSIONCOUNT,
+    "encoder.stats.averageFps" : NVSMI_ENCODER_STATS_AVG_EPS,
+    "encoder.stats.averageLatency" : NVSMI_ENCODER_STATS_AVG_LATENCY,
+    "ecc.mode.current" : NVSMI_ECC_MODE_CUR,
+    "ecc.mode.pending" : NVSMI_ECC_MODE_PENDING,
+    "ecc.errors.corrected.volatile.device_memory" : NVSMI_ECC_ERROR_CORRECTED_VOLATILE_DEV_MEM,
+    "ecc.errors.corrected.volatile.register_file" : NVSMI_ECC_ERROR_CORRECTED_VOLATILE_REGFILE,
+    "ecc.errors.corrected.volatile.l1_cache" : NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L1CACHE,
+    "ecc.errors.corrected.volatile.l2_cache" : NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L2CACHE,
+    "ecc.errors.corrected.volatile.texture_memory" : NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE,
+    "ecc.errors.corrected.volatile.dram" : NVSMI_ECC_ERROR_CORRECTED_VOLATILE_DRAM,
+    "ecc.errors.corrected.volatile.sram" : NVSMI_ECC_ERROR_CORRECTED_VOLATILE_SRAM,
+    "ecc.errors.corrected.volatile.cbu" : NVSMI_ECC_ERROR_CORRECTED_VOLATILE_CBU,
+    "ecc.errors.corrected.volatile.total" : NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TOTAL,
+    "ecc.errors.corrected.aggregate.device_memory" : NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DEV_MEM,
+    "ecc.errors.corrected.aggregate.register_file" : NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_REGFILE,
+    "ecc.errors.corrected.aggregate.l1_cache" : NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L1CACHE,
+    "ecc.errors.corrected.aggregate.l2_cache" : NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L2CACHE,
+    "ecc.errors.corrected.aggregate.texture_memory" : NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TEXTURE,
+    "ecc.errors.corrected.aggregate.dram" : NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DRAM,
+    "ecc.errors.corrected.aggregate.cbu" : NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_CBU,
+    "ecc.errors.corrected.aggregate.sram" : NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_SRAM,
+    "ecc.errors.corrected.aggregate.total" : NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TOTAL,
+    "ecc.errors.uncorrected.volatile.device_memory" : NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_DEV_MEM,
+    "ecc.errors.uncorrected.volatile.register_file" : NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_REGFILE,
+    "ecc.errors.uncorrected.volatile.l1_cache" : NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_L1CACHE,
+    "ecc.errors.uncorrected.volatile.l2_cache" : NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_L2CACHE,
+    "ecc.errors.uncorrected.volatile.texture_memory" : NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TEXTURE,
+    "ecc.errors.uncorrected.volatile.dram"  : NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_DRAM,
+    "ecc.errors.uncorrected.volatile.cbu" : NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_CBU,
+    "ecc.errors.uncorrected.volatile.sram" : NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_SRAM,
+    "ecc.errors.uncorrected.volatile.total" : NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TOTAL,
+    "ecc.errors.uncorrected.aggregate.device_memory" : NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_DEV_MEM,
+    "ecc.errors.uncorrected.aggregate.register_file" : NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_REGFILE,
+    "ecc.errors.uncorrected.aggregate.l1_cache" : NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_L1CACHE,
+    "ecc.errors.uncorrected.aggregate.l2_cache" : NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_L2CACHE,
+    "ecc.errors.uncorrected.aggregate.texture_memory" : NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TEXTURE,
+    "ecc.errors.uncorrected.aggregate.dram"  : NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_DRAM,
+    "ecc.errors.uncorrected.aggregate.cbu" : NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_CBU,
+    "ecc.errors.uncorrected.aggregate.sram" : NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_SRAM,
+    "ecc.errors.uncorrected.aggregate.total" : NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TOTAL,
+    "retired_pages.single_bit_ecc.count" : NVSMI_RETIREDPAGES_SINGLE_BIT_ECC_COUNT,
+    "retired_pages.sbe" : NVSMI_RETIREDPAGES_SINGLE_BIT_ECC_COUNT,
+    "retired_pages.double_bit.count" : NVSMI_RETIREDPAGES_DOUBLE_BIT_ECC_COUNT,
+    "retired_pages.dbe" : NVSMI_RETIREDPAGES_DOUBLE_BIT_ECC_COUNT,
+    "retired_pages.pending" : NVSMI_RETIREDPAGES_PENDING,
+    "temperature.gpu" : NVSMI_TEMPERATURE_GPU,
+    "temperature.memory" : NVSMI_TEMPERATURE_MEMORY,
+    "power.management" : NVSMI_POWER_MGMT,
+    "power.draw" : NVSMI_POWER_DRAW,
+    "power.limit" : NVSMI_POWER_LIMIT,
+    "enforced.power.limit" : NVSMI_POWER_LIMIT_ENFORCED,
+    "power.default_limit" : NVSMI_POWER_LIMIT_DEFAULT,
+    "power.min_limit" : NVSMI_POWER_LIMIT_MIN,
+    "power.max_limit" : NVSMI_POWER_LIMIT_MAX,
+    "clocks.current.graphics" : NVSMI_CLOCKS_GRAPHICS_CUR,
+    "clocks.gr" : NVSMI_CLOCKS_GRAPHICS_CUR,
+    "clocks.current.sm" : NVSMI_CLOCKS_SM_CUR,
+    "clocks.sm" : NVSMI_CLOCKS_SM_CUR,
+    "clocks.current.memory" : NVSMI_CLOCKS_MEMORY_CUR,
+    "clocks.mem" : NVSMI_CLOCKS_MEMORY_CUR,
+    "clocks.current.video" : NVSMI_CLOCKS_VIDEO_CUR,
+    "clocks.video" : NVSMI_CLOCKS_VIDEO_CUR,
+    "clocks.applications.graphics" : NVSMI_CLOCKS_APPL_GRAPHICS,
+    "clocks.applications.gr" : NVSMI_CLOCKS_APPL_GRAPHICS,
+    "clocks.applications.memory" : NVSMI_CLOCKS_APPL_MEMORY,
+    "clocks.applications.mem" : NVSMI_CLOCKS_APPL_MEMORY,
+    "clocks.default_applications.graphics" : NVSMI_CLOCKS_APPL_GRAPHICS_DEFAULT,
+    "clocks.default_applications.gr" : NVSMI_CLOCKS_APPL_GRAPHICS_DEFAULT,
+    "clocks.default_applications.memory" : NVSMI_CLOCKS_APPL_MEMORY_DEFAULT,
+    "clocks.default_applications.mem" : NVSMI_CLOCKS_APPL_MEMORY_DEFAULT,
+    "clocks.max.graphics" : NVSMI_CLOCKS_GRAPHICS_MAX,
+    "clocks.max.gr" : NVSMI_CLOCKS_GRAPHICS_MAX,
+    "clocks.max.sm" : NVSMI_CLOCKS_SM_MAX,
+    "clocks.max.sm" : NVSMI_CLOCKS_SM_MAX,
+    "clocks.max.memory" : NVSMI_CLOCKS_MEMORY_MAX,
+    "clocks.max.mem" : NVSMI_CLOCKS_MEMORY_MAX,
+    "supported-clocks" : NVSMI_CLOCKS_SUPPORTED,
+    "compute-apps" : NVSMI_COMPUTE_APPS,
+    "accounted-apps" : NVSMI_ACCOUNTED_APPS,
+    "clocks" : NVSMI_CLOCKS_POLICY,
+    "mig.mode.current" : NVSMI_MIG_MODE_CURRENT,
+    "mig.mode.pending" : NVSMI_MIG_MODE_PENDING,
 }
 
 NVSMI_BRAND_NAMES = {NVML_BRAND_UNKNOWN :  "Unknown",
@@ -339,6 +368,17 @@ NVSMI_BRAND_NAMES = {NVML_BRAND_UNKNOWN :  "Unknown",
                      NVML_BRAND_NVS     :  "NVS",
                      NVML_BRAND_GRID    :  "Grid",
                      NVML_BRAND_GEFORCE :  "GeForce",
+                     NVML_BRAND_TITAN   :  "Titan",
+                     NVML_BRAND_NVIDIA_VAPPS : "NVIDIA Virtual Applications",
+                     NVML_BRAND_NVIDIA_VPC   : "NVIDIA Virtual PC",
+                     NVML_BRAND_NVIDIA_VCS   : "NVIDIA Virtual Compute Server",
+                     NVML_BRAND_NVIDIA_VWS   : "NVIDIA RTX Virtual Workstation",
+                     NVML_BRAND_NVIDIA_VGAMING : "NVIDIA vGaming",
+                     NVML_BRAND_QUADRO_RTX     : "Quadro RTX",
+                     NVML_BRAND_NVIDIA_RTX     : "NVIDIA RTX",
+                     NVML_BRAND_NVIDIA         : "NVIDIA",
+                     NVML_BRAND_GEFORCE_RTX    : "Geforce RTX",
+                     NVML_BRAND_TITAN_RTX      : "Titan RTX",
 }
 
 ## ========================================================================== ##
@@ -464,6 +504,14 @@ class nvidia_smi:
 
       try:
           registerFile = nvmlDeviceGetMemoryErrorCounter(handle, errorType, counterType,
+                                                         NVML_MEMORY_LOCATION_DRAM)
+      except NVMLError as err:
+          registerFile = nvidia_smi.__handleError(err)
+
+      strResult += '          <dram>' + nvidia_smi.__toString(registerFile) + '</dram>\n'
+
+      try:
+          registerFile = nvmlDeviceGetMemoryErrorCounter(handle, errorType, counterType,
                                                          NVML_MEMORY_LOCATION_REGISTER_FILE)
       except NVMLError as err:
           registerFile = nvidia_smi.__handleError(err)
@@ -492,6 +540,22 @@ class nvidia_smi:
       strResult += '          <texture_memory>' + nvidia_smi.__toString(textureMemory) + '</texture_memory>\n'
 
       try:
+          registerFile = nvmlDeviceGetMemoryErrorCounter(handle, errorType, counterType,
+                                                         NVML_MEMORY_LOCATION_CBU)
+      except NVMLError as err:
+          registerFile = nvidia_smi.__handleError(err)
+
+      strResult += '          <cbu>' + nvidia_smi.__toString(registerFile) + '</cbu>\n'
+
+      try:
+          registerFile = nvmlDeviceGetMemoryErrorCounter(handle, errorType, counterType,
+                                                         NVML_MEMORY_LOCATION_SRAM)
+      except NVMLError as err:
+          registerFile = nvidia_smi.__handleError(err)
+
+      strResult += '          <sram>' + nvidia_smi.__toString(registerFile) + '</sram>\n'
+
+      try:
           count = nvidia_smi.__toString(nvmlDeviceGetTotalEccErrors(handle, errorType, counterType))
       except NVMLError as err:
           count = nvidia_smi.__handleError(err)
@@ -511,6 +575,14 @@ class nvidia_smi:
           deviceMemory = nvidia_smi.__handleError(err)
 
       eccByType['device_memory'] = deviceMemory
+
+      try:
+          deviceMemory = nvmlDeviceGetMemoryErrorCounter(handle, errorType, counterType,
+                                                         NVML_MEMORY_LOCATION_DRAM)
+      except NVMLError as err:
+          deviceMemory = nvidia_smi.__handleError(err)
+
+      eccByType['dram'] = deviceMemory
 
       try:
           registerFile = nvmlDeviceGetMemoryErrorCounter(handle, errorType, counterType,
@@ -542,6 +614,22 @@ class nvidia_smi:
       eccByType['texture_memory'] = textureMemory
 
       try:
+          deviceMemory = nvmlDeviceGetMemoryErrorCounter(handle, errorType, counterType,
+                                                         NVML_MEMORY_LOCATION_CBU)
+      except NVMLError as err:
+          deviceMemory = nvidia_smi.__handleError(err)
+
+      eccByType['cbu'] = deviceMemory
+
+      try:
+          deviceMemory = nvmlDeviceGetMemoryErrorCounter(handle, errorType, counterType,
+                                                         NVML_MEMORY_LOCATION_SRAM)
+      except NVMLError as err:
+          deviceMemory = nvidia_smi.__handleError(err)
+
+      eccByType['sram'] = deviceMemory
+
+      try:
           count = nvidia_smi.__toString(nvmlDeviceGetTotalEccErrors(handle, errorType, counterType))
       except NVMLError as err:
           count = nvidia_smi.__handleError(err)
@@ -558,11 +646,19 @@ class nvidia_smi:
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L1CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L2CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_DRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_SRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_CBU in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TOTAL in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DEV_MEM in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_REGFILE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L1CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L2CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_CBU in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_SRAM in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TOTAL in filter):
           eccByCounter += '        <single_bit>\n'
           eccByCounter += nvidia_smi.__toString(nvidia_smi.__xmlGetEccByType(handle, counterType, NVML_MEMORY_ERROR_TYPE_CORRECTED))
@@ -574,11 +670,19 @@ class nvidia_smi:
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L1CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L2CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_DRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_SRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_CBU in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TOTAL in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DEV_MEM in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_REGFILE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L1CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L2CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_CBU in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_SRAM in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TOTAL in filter):
           eccByCounter += '        <double_bit>\n'
           eccByCounter += nvidia_smi.__toString(nvidia_smi.__xmlGetEccByType(handle, counterType, NVML_MEMORY_ERROR_TYPE_UNCORRECTED))
@@ -596,11 +700,19 @@ class nvidia_smi:
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L1CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L2CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_DRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_SRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_CBU in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TOTAL in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DEV_MEM in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_REGFILE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L1CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L2CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_CBU in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_SRAM in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TOTAL in filter):
           eccByCounter['single_bit'] = nvidia_smi.__GetEccByType(handle, counterType, NVML_MEMORY_ERROR_TYPE_CORRECTED)
 
@@ -610,11 +722,18 @@ class nvidia_smi:
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L1CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L2CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_DRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_SRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_CBU in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TOTAL in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DEV_MEM in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_REGFILE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L1CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L2CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_CBU in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_SRAM in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TOTAL in filter):
           eccByCounter['double_bit'] = nvidia_smi.__GetEccByType(handle, counterType, NVML_MEMORY_ERROR_TYPE_UNCORRECTED)
 
@@ -630,11 +749,18 @@ class nvidia_smi:
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L1CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L2CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_DRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_SRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_CBU in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TOTAL in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_DEV_MEM in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_REGFILE in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_L1CACHE in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_L2CACHE in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_DRAM in filter or
+          NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_SRAM in filter or
+          NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_CBU in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TOTAL in filter  ):
           ecc += '      <volatile>\n'
           ecc += nvidia_smi.__toString(nvidia_smi.__xmlGetEccByCounter(handle, NVML_VOLATILE_ECC, filter))
@@ -647,12 +773,18 @@ class nvidia_smi:
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L1CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L2CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_SRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_CBU in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TOTAL in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_DEV_MEM in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_REGFILE in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_L1CACHE in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_L2CACHE in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_DRAM in filter or
+          NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_SRAM in filter or
+          NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_CBU in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TOTAL in filter ):
           ecc += '      <aggregate>\n'
           ecc += nvidia_smi.__toString(nvidia_smi.__xmlGetEccByCounter(handle, NVML_AGGREGATE_ECC, filter))
@@ -671,11 +803,18 @@ class nvidia_smi:
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L1CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_L2CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_DRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_SRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_CBU in filter or
+          NVSMI_ECC_ERROR_CORRECTED_VOLATILE_TOTAL in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_DEV_MEM in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_REGFILE in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_L1CACHE in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_L2CACHE in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_DRAM in filter or
+          NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_SRAM in filter or
+          NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_CBU in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_VOLATILE_TOTAL in filter  ):
           ecc['volatile'] = nvidia_smi.__GetEccByCounter(handle, NVML_VOLATILE_ECC, filter)
           includeEcc = True
@@ -686,12 +825,18 @@ class nvidia_smi:
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L1CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_L2CACHE in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_DRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_SRAM in filter or
+          NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_CBU in filter or
           NVSMI_ECC_ERROR_CORRECTED_AGGREGATE_TOTAL in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_DEV_MEM in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_REGFILE in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_L1CACHE in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_L2CACHE in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TEXTURE in filter or
+          NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_DRAM in filter or
+          NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_SRAM in filter or
+          NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_CBU in filter or
           NVSMI_ECC_ERROR_UNCORRECTED_AGGREGATE_TOTAL in filter ):
           ecc['aggregate'] = nvidia_smi.__GetEccByCounter(handle, NVML_AGGREGATE_ECC, filter)
           includeEcc = True
@@ -824,7 +969,7 @@ class nvidia_smi:
               [nvmlClocksThrottleReasonApplicationsClocksSetting, "clocks_throttle_reason_applications_clocks_setting"],
               [nvmlClocksThrottleReasonSwPowerCap,        "clocks_throttle_reason_sw_power_cap"],
               [nvmlClocksThrottleReasonHwSlowdown,        "clocks_throttle_reason_hw_slowdown"],
-              [nvmlClocksThrottleReasonUnknown,           "clocks_throttle_reason_unknown"]
+              [nvmlClocksThrottleReasonNone,           "clocks_throttle_reason_none"]
               ];
 
       strResult = ''
@@ -854,7 +999,7 @@ class nvidia_smi:
               [nvmlClocksThrottleReasonApplicationsClocksSetting, "clocks_throttle_reason_applications_clocks_setting"],
               [nvmlClocksThrottleReasonSwPowerCap,        "clocks_throttle_reason_sw_power_cap"],
               [nvmlClocksThrottleReasonHwSlowdown,        "clocks_throttle_reason_hw_slowdown"],
-              [nvmlClocksThrottleReasonUnknown,           "clocks_throttle_reason_unknown"]
+              [nvmlClocksThrottleReasonNone,           "clocks_throttle_reason_none"]
               ];
 
       clockThrottleReasons = {}
@@ -873,7 +1018,7 @@ class nvidia_smi:
           clockThrottleReasons['Error'] = nvidia_smi.__handleError(err);
 
       return clockThrottleReasons if len(clockThrottleReasons.values()) > 0 else None
-
+    
   #
   # Converts errors into string messages
   #
@@ -909,7 +1054,7 @@ class nvidia_smi:
       ---------------------------------------------------------------------------
       For XML of filtered elements by string name.
       Similiar ot nvidia-smi --query-gpu=pci.bus_id,memory.total,memory.free
-      See help_query_gpu.txt or XmlDeviceQuery("--help_query_gpu") for available filter elements
+      See help_query_gpu.txt or XmlDeviceQuery("--help-query-gpu") for available filter elements
 
       $ XmlDeviceQuery("pci.bus_id,memory.total,memory.free")
 
@@ -1010,6 +1155,27 @@ class nvidia_smi:
                       bufferSize = nvidia_smi.__handleError(err)
 
                   gpuInfo += '    <accounting_mode_buffer_size>' + bufferSize + '</accounting_mode_buffer_size>\n'
+
+              migMode = ''
+              includeMigMode = False
+              if (NVSMI_ALL in filter or 
+                  NVSMI_MIG_MODE_CURRENT in filter or 
+                  NVSMI_MIG_MODE_PENDING in filter):
+                  try:
+                      (current, pending) = nvmlDeviceGetMigMode(handle) 
+                      current = 'Enabled' if current == NVML_DEVICE_MIG_ENABLE else 'Disabled'
+                      pending = 'Enabled' if pending == NVML_DEVICE_MIG_ENABLE else 'Disabled'
+                  except NVMLError as err:
+                      current = nvidia_smi.__handleError(err)
+                      pending = current
+                  migMode += '      <current_mm>' + current + '</current_mm>\n'
+                  migMode += '      <pending_mm>' + pending + '</pending_mm>\n'
+                  includeMigMode = True
+
+              if includeMigMode:
+                  gpuInfo += '    <mig_mode>\n'
+                  gpuInfo += migMode
+                  gpuInfo += '    </mig_mode>\n'
 
               driverModel = ''
               includeDriverModel = False
@@ -1138,7 +1304,7 @@ class nvidia_smi:
 
               gpuOperationMode = ''
               includeGOM = False
-              if (NVSMI_ALL in filter or NVSMI_INFOROM_PWR in filter):
+              if (NVSMI_ALL in filter or NVSMI_GOM_CUR in filter):
                   try:
                       current = nvidia_smi.__toStrGOM(nvmlDeviceGetCurrentGpuOperationMode(handle))
                   except NVMLError as err:
@@ -1146,7 +1312,7 @@ class nvidia_smi:
                   gpuOperationMode += '      <current_gom>' + nvidia_smi.__toString(current) + '</current_gom>\n'
                   includeGOM = True
 
-              if (NVSMI_ALL in filter or NVSMI_INFOROM_PWR in filter):
+              if (NVSMI_ALL in filter or NVSMI_GOM_PENDING in filter):
                   try:
                       pending = nvidia_smi.__toStrGOM(nvmlDeviceGetPendingGpuOperationMode(handle))
                   except NVMLError as err:
@@ -1854,7 +2020,7 @@ class nvidia_smi:
 
       ---------------------------------------------------------------------------
       For a list of filtered dictionary elements by enumeration value.
-      See help_query_gpu.txt or DeviceQuery("--help_query_gpu") for available filter elements
+      See help_query_gpu.txt or DeviceQuery("--help-query-gpu") for available filter elements
 
       $ DeviceQuery([NVSMI_PCI_BUS_ID, NVSMI_MEMORY_TOTAL, NVSMI_MEMORY_FREE])
 
@@ -1928,6 +2094,24 @@ class nvidia_smi:
                       mode = nvidia_smi.__handleError(err)
 
                   gpuResults['persistence_mode']=mode
+
+              migMode = {}
+              includeMigMode = False
+              if (NVSMI_ALL in filter or 
+                  NVSMI_MIG_MODE_CURRENT in filter or 
+                  NVSMI_MIG_MODE_PENDING in filter):
+                  try:
+                      (current, pending) = nvmlDeviceGetMigMode(handle) 
+                  except NVMLError as err:
+                      current = nvidia_smi.__handleError(err)
+                      pending = current
+                  migMode['current_mm'] = 'Enabled' if current == NVML_DEVICE_MIG_ENABLE else 'Disabled'
+                  migMode['pending_mm'] = 'Enabled' if pending == NVML_DEVICE_MIG_ENABLE else 'Disabled'
+                  includeMigMode = True
+
+              if includeMigMode:
+                  gpuResults['mig_mode'] = migMode
+
 
               if (NVSMI_ALL in filter or NVSMI_ACCT_MODE in filter):
                   try:
@@ -2068,7 +2252,7 @@ class nvidia_smi:
 
               gpuOperationMode = {}
               includeGOM = False
-              if (NVSMI_ALL in filter or NVSMI_INFOROM_PWR in filter):
+              if (NVSMI_ALL in filter or NVSMI_GOM_CUR in filter):
                   try:
                       current = nvidia_smi.__toStrGOM(nvmlDeviceGetCurrentGpuOperationMode(handle))
                   except NVMLError as err:
@@ -2076,7 +2260,7 @@ class nvidia_smi:
                   gpuOperationMode['current_gom'] = nvidia_smi.__toString(current)
                   includeGOM = True
 
-              if (NVSMI_ALL in filter or NVSMI_INFOROM_PWR in filter):
+              if (NVSMI_ALL in filter or NVSMI_GOM_PENDING in filter):
                   try:
                       pending = nvidia_smi.__toStrGOM(nvmlDeviceGetPendingGpuOperationMode(handle))
                   except NVMLError as err:

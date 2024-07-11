@@ -14,7 +14,10 @@ This is a wrapper around the NVML library.
 For information about the NVML library, see the NVML developer page
 http://developer.nvidia.com/nvidia-management-library-nvml
 
-Note this file can be run with 'python -m doctest -v README.txt'
+As of version 11.0.0, the NVML-wrappers used in pynvml are identical
+to those published through [nvidia-ml-py](https://pypi.org/project/nvidia-ml-py/).
+
+Note that this file can be run with 'python -m doctest -v README.txt'
 although the results are system dependent
 
 Requires
@@ -34,12 +37,12 @@ You can use the lower level nvml bindings
 ```python
 >>> from pynvml import *
 >>> nvmlInit()
->>> print "Driver Version:", nvmlSystemGetDriverVersion()
+>>> print("Driver Version:", nvmlSystemGetDriverVersion())
 Driver Version: 410.00
 >>> deviceCount = nvmlDeviceGetCount()
 >>> for i in range(deviceCount):
 ...     handle = nvmlDeviceGetHandleByIndex(i)
-...     print "Device", i, ":", nvmlDeviceGetName(handle)
+...     print("Device", i, ":", nvmlDeviceGetName(handle))
 ...
 Device 0 : Tesla V100
 
@@ -52,6 +55,12 @@ Or the higher level nvidia_smi API
 from pynvml.smi import nvidia_smi
 nvsmi = nvidia_smi.getInstance()
 nvsmi.DeviceQuery('memory.free, memory.total')
+```
+
+```python
+from pynvml.smi import nvidia_smi
+nvsmi = nvidia_smi.getInstance()
+print(nvsmi.DeviceQuery('--help-query-gpu'), end='\n')
 ```
 
 Functions
@@ -129,6 +138,27 @@ All meaningful NVML constants and enums are exposed in Python.
 
 The NVML_VALUE_NOT_AVAILABLE constant is not used.  Instead None is mapped to the field.
 
+NVML Permissions
+----------------
+
+Many of the `pynvml` wrappers assume that the underlying NVIDIA Management Library (NVML) API can be used without admin/root privileges.  However, it is certainly possible for the system permissions to prevent pynvml from querying GPU performance counters. For example:
+
+```
+$ nvidia-smi nvlink -g 0
+GPU 0: Tesla V100-SXM2-32GB (UUID: GPU-96ab329d-7a1f-73a8-a9b7-18b4b2855f92)
+NVML: Unable to get the NvLink link utilization counter control for link 0: Insufficient Permissions
+```
+
+A simple way to check the permissions status is to look for `RmProfilingAdminOnly` in the driver `params` file (Note that `RmProfilingAdminOnly == 1` means that admin/sudo access is required):
+
+```
+$ cat /proc/driver/nvidia/params | grep RmProfilingAdminOnly
+RmProfilingAdminOnly: 1
+```
+
+For more information on setting/unsetting the relevant admin privileges, see [these notes](https://developer.nvidia.com/nvidia-development-tools-solutions-ERR_NVGPUCTRPERM-permission-issue-performance-counters) on resolving `ERR_NVGPUCTRPERM` errors.
+
+
 Release Notes
 -------------
 
@@ -164,20 +194,25 @@ Release Notes
     - Restructuring directories into two packages (pynvml and nvidia_smi)
     - Adding initial tests for both packages
     - Some name-convention cleanup in pynvml
-
-
-Copyright
----------
-Copyright (c) 2011-2019, NVIDIA Corporation.  All rights reserved.
-
-License
--------
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-- Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-- Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-- Neither the name of the NVIDIA Corporation nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-   Version 8.0.2
+    - Added NVLink function wrappers for pynvml module
+-   Version 8.0.3
+    - Added versioneer
+    - Fixed nvmlDeviceGetNvLinkUtilizationCounter bug
+-   Version 8.0.4
+    - Added nvmlDeviceGetTotalEnergyConsumption
+    - Added notes about NVML permissions
+    - Fixed version-check testing
+-   Version 11.0.0
+    - Updated nvml.py to CUDA 11
+    - Updated smi.py DeviceQuery to R460
+    - Aligned nvml.py with latest nvidia-ml-py deployment
+-   Version 11.4.0
+    - Updated nvml.py to CUDA 11.4
+    - Updated smi.py NVML_BRAND_NAMES
+    - Aligned nvml.py with latest nvidia-ml-py deployment (11.495.46)
+-   Version 11.4.1
+    - Fix comma bugs in nvml.py
+-   Version 11.5.0
+    - Updated nvml.py to support CUDA 11.5 and CUDA 12
+    - Aligned with latest nvidia-ml-py deployment (11.525.84)
