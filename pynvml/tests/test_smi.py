@@ -1,6 +1,6 @@
-from pynvml_utils import nvidia_smi
+from pynvml.smi import nvidia_smi
 import pytest
-
+import os
 
 # Fixture to initialize and finalize nvml
 @pytest.fixture(scope="module")
