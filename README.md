@@ -1,7 +1,7 @@
 > [!WARNING]
 > This package includes unofficial NVML bindings and utilities.
 > This package is intended for demonstration purposes only. There
-> is no guarentee for long-term maintenence or support.
+> is no guarantee for long-term maintenence or support.
 >
 > The official NVML bindings are published by NVIDIA under a different
 > `nvidia-ml-py` project (see: https://pypi.org/project/nvidia-ml-py/).
@@ -10,6 +10,8 @@
 > directly, but will instead depend on `nvidia-ml-py`.
 >
 > Please migrate to the official package for long-term support.
+> You can still import and use a familar `pynvml` module after
+> migrating to the official package.
 
 Python bindings and utilities for the NVIDIA Management Library
 ===============================================================
@@ -61,13 +63,13 @@ Device 0 : Tesla V100
 Or the higher level `nvidia_smi` API
 
 ```python
-from nvml_utilities import nvidia_smi
+from pynvml_utils import nvidia_smi
 nvsmi = nvidia_smi.getInstance()
 nvsmi.DeviceQuery('memory.free, memory.total')
 ```
 
 ```python
-from nvml_utilities import nvidia_smi
+from pynvml_utils import nvidia_smi
 nvsmi = nvidia_smi.getInstance()
 print(nvsmi.DeviceQuery('--help-query-gpu'), end='\n')
 ```
