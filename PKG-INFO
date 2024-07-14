@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: pynvml
-Version: 11.5.1
+Version: 11.5.2
 Summary: Python Bindings for the NVIDIA Management Library
 Home-page: http://www.nvidia.com/
 Author: NVIDIA Corporation
