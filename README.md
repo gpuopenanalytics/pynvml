@@ -227,6 +227,8 @@ Release Notes
 -   Version 11.5.0
     - Updated nvml.py to support CUDA 11.5 and CUDA 12
     - Aligned with latest nvidia-ml-py deployment (11.525.84)
--   Version 11.5.1
+-   Version 11.5.2
     - Relocated smi bindings to new pynvml_utils module
     - Updated README to encourage migration to nvidia-ml-py
+-   Version 11.5.3
+    - Update versioneer
