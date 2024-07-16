@@ -10,12 +10,6 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-# earlier versions don't support all classifiers
-#if version < '2.2.3':
-#    from distutils.dist import DistributionMetadata
-#    DistributionMetadata.classifiers = None
-#    DistributionMetadata.download_url = None
-
 setup(name='pynvml',
       version=versioneer.get_version(),
       cmdclass=versioneer.get_cmdclass(),
