@@ -1099,6 +1099,7 @@ class c_nvmlProcessInfo_t(_PrintableStructure):
         ('usedGpuMemory', c_ulonglong),
         ('gpuInstanceId', c_uint),
         ('computeInstanceId', c_uint),
+        ("index", c_ssize_t),
     ]
     _fmt_ = {'usedGpuMemory': "%d B",
             }
@@ -1566,7 +1567,7 @@ class c_nvmlGpuInstanceProfileInfo_v2_t(_PrintableStructure):
                 ("memorySizeMB", c_ulonglong),
                 ("name", c_char * NVML_DEVICE_NAME_V2_BUFFER_SIZE)
                ]
-    
+
     def __init__(self):
         super(c_nvmlGpuInstanceProfileInfo_v2_t, self).__init__(version=nvmlGpuInstanceProfileInfo_v2)
 
@@ -4024,7 +4025,7 @@ def nvmlGpuInstanceGetComputeInstanceProfileInfo(device, profile, engProfile, ve
         c_info = c_nvmlComputeInstanceProfileInfo_t()
         fn = _nvmlGetFunctionPointer("nvmlGpuInstanceGetComputeInstanceProfileInfo")
     else:
-        raise NVMLError(NVML_ERROR_FUNCTION_NOT_FOUND) 
+        raise NVMLError(NVML_ERROR_FUNCTION_NOT_FOUND)
     ret = fn(device, profile, engProfile, byref(c_info))
     _nvmlCheckReturn(ret)
     return c_info
@@ -4508,7 +4509,7 @@ def nvmlDeviceSetNvLinkDeviceLowPowerThreshold(device, l1threshold):
     fn = _nvmlGetFunctionPointer("nvmlDeviceSetNvLinkDeviceLowPowerThreshold")
     ret = fn(device, byref(c_info))
     _nvmlCheckReturn(ret)
-    return ret 
+    return ret
 
 _nvmlGpuFabricState_t = c_uint
 NVML_GPU_FABRIC_STATE_NOT_SUPPORTED = 0
