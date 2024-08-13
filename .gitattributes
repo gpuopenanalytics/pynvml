@@ -1,1 +1,2 @@
 pynvml/_version.py export-subst
+pynvml_utils/_version.py export-subst

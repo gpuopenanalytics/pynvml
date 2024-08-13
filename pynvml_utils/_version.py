@@ -53,7 +53,7 @@ def get_config() -> VersioneerConfig:
     cfg.style = "pep440"
     cfg.tag_prefix = ""
     cfg.parentdir_prefix = "pynvml-"
-    cfg.versionfile_source = "pynvml/_version.py"
+    cfg.versionfile_source = "pynvml_utils/_version.py"
     cfg.verbose = False
     return cfg
 
