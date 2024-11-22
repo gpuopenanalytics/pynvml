@@ -1,8 +1,8 @@
 > [!WARNING]
-> This package provides unofficial NVML Python utilities (i.e. the `pynvml_utils` module).
->
+> 
 > **The `pynvml` module is NOT developed or maintained in this project!**
 > 
+> This package provides unofficial NVML Python utilities (i.e. the `pynvml_utils` module).
 > This `pynvml_utils` module is intended for demonstration purposes only.
 > There is no guarantee for long-term maintenence or support.
 >
