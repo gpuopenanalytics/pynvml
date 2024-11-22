@@ -45,7 +45,7 @@ XmlDeviceQuery("--help")
 XmlDeviceQuery("--help_query_gpu")
 """
 
-from pynvml.nvml import *
+from pynvml import *
 import datetime
 import collections
 import time
