@@ -1,4 +1,3 @@
 from .smi import nvidia_smi
 
-from . import _version
-__version__ = _version.get_versions()['version']
+__version__ = '12.0.0'

@@ -2,8 +2,6 @@ from setuptools import setup, find_packages
 from os import path
 from io import open
 
-import versioneer
-
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
@@ -11,8 +9,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='pynvml',
-      version=versioneer.get_version(),
-      cmdclass=versioneer.get_cmdclass(),
+      version='12.0.0',
       python_requires='>=3.6',
       install_requires = ['nvidia-ml-py<13.0'],
       description='Python utilities for the NVIDIA Management Library',
