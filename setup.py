@@ -10,6 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(name='pynvml',
       version='12.0.0',
+      python_requires='>=3.6',
       install_requires = ['nvidia-ml-py>=12.0.0,<13.0.0a0'],
       description='Python utilities for the NVIDIA Management Library',
       long_description=long_description,
