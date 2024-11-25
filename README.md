@@ -2,12 +2,12 @@
 > 
 > **The `pynvml` module is NOT developed or maintained in this project!**
 > 
-> This package provides unofficial NVML Python utilities (i.e. the `pynvml_utils` module).
-> This `pynvml_utils` module is intended for demonstration purposes only.
+> This project provides unofficial NVML Python utilities (i.e. the `pynvml_utils` module).
+> The `pynvml_utils` module is intended for demonstration purposes only.
 > There is no guarantee for long-term maintenence or support.
 >
-> This package depends on the official NVML bindings published by
-> NVIDIA under a different `nvidia-ml-py` project
+> The `pynvml_utils` module depends on the official NVML bindings
+> published by NVIDIA under a different `nvidia-ml-py` project
 > (see: https://pypi.org/project/nvidia-ml-py/).
 >
 
@@ -38,6 +38,10 @@ Usage
 Bindings for the high-level `nvidia-smi` API are available
 in `pynvml_utils.nvidia_smi`:
 
+> [!WARNING]
+> The `nvidia_smi` module is intended for demonstration purposes only.
+> There is no guarantee for long-term maintenence or support.
+
 ```python
 from pynvml_utils import nvidia_smi
 nvsmi = nvidia_smi.getInstance()
@@ -50,17 +54,12 @@ nvsmi = nvidia_smi.getInstance()
 print(nvsmi.DeviceQuery('--help-query-gpu'), end='\n')
 ```
 
-> [!WARNING]
-> The `nvidia_smi` module is intended for demonstration purposes only.
-> There is no guarantee for long-term maintenence or support.
-
-
 Release Notes
 -------------
 
 -   Version 12.0.0
     - Remove pynvml module and depend on nvidia-ml-py
-    - Pin to nvidia-ml-py<13.0
+    - Pin to nvidia-ml-py>=12.0.0,<13.0.0a0
 
 
 Old Releases
