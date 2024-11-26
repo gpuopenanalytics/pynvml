@@ -18,6 +18,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 ADD ./pynvml_utils /app/pynvml_utils
 ADD ./README.md /app/
+ADD ./MANIFEST.in /app/
 ADD ./help_query_gpu.txt /app/
 ADD docker/entrypoint.sh /docker-entrypoint.sh
 
