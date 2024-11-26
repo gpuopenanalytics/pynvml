@@ -6,7 +6,7 @@
 # BUILD: docker build --network=host --file docker/Dockerfile --tag pynvml .
 # RUN: docker run --gpus all --rm -it  pynvml
 ##############################################################
-FROM python:3.6
+FROM python:3.8
 
 ENV DEBIAN_FRONTEND noninteractive 
 
@@ -16,12 +16,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r /app/requirements.txt && \
     rm -rf ~/.cache/pip
 
-ADD ./pynvml /app/pynvml
-ADD ./setup.py /app/
-ADD ./setup.cfg /app/
+ADD ./pynvml_utils /app/pynvml_utils
 ADD ./README.md /app/
-ADD ./PKG-INFO /app/
-ADD ./MANIFEST.in /app/
 ADD ./help_query_gpu.txt /app/
 ADD docker/entrypoint.sh /docker-entrypoint.sh
 
