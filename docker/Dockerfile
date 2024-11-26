@@ -10,19 +10,15 @@ FROM python:3.8
 
 ENV DEBIAN_FRONTEND noninteractive 
 
-ADD ./requirements.txt /app/requirements.txt
-
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r /app/requirements.txt && \
+ADD . /app/.
+RUN cd /app && \
+    pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir . && \
     rm -rf ~/.cache/pip
 
-ADD ./pynvml_utils /app/pynvml_utils
-ADD ./README.md /app/
-ADD ./MANIFEST.in /app/
-ADD ./help_query_gpu.txt /app/
 ADD docker/entrypoint.sh /docker-entrypoint.sh
 
-RUN chmod +x  /docker-entrypoint.sh 
+RUN chmod +x /docker-entrypoint.sh 
 
 ## Create App user 
 # Set the home directory to our app user's home.
