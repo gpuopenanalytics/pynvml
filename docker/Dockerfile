@@ -6,15 +6,19 @@
 # BUILD: docker build --network=host --file docker/Dockerfile --tag pynvml .
 # RUN: docker run --gpus all --rm -it  pynvml
 ##############################################################
-FROM python:3.8
+FROM python:3.9
 
 ENV DEBIAN_FRONTEND noninteractive 
 
-ADD . /app/.
-RUN cd /app && \
-    pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir . && \
-    rm -rf ~/.cache/pip
+RUN <<EOF
+cd /app
+pip install --no-cache-dir --upgrade pip
+pip install --no-cache-dir -e .
+
+find /app -type f -name '*.pyc' -delete
+find /app -type d -name '__pycache__' -delete
+rm -rf ~/.cache/pip
+EOF
 
 ADD docker/entrypoint.sh /docker-entrypoint.sh
 
