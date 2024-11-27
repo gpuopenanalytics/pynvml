@@ -10,6 +10,7 @@ FROM python:3.9
 
 ENV DEBIAN_FRONTEND noninteractive 
 
+ADD . /app/.
 RUN <<EOF
 cd /app
 pip install --no-cache-dir --upgrade pip
@@ -20,10 +21,6 @@ find /app -type d -name '__pycache__' -delete
 rm -rf ~/.cache/pip
 EOF
 
-ADD docker/entrypoint.sh /docker-entrypoint.sh
-
-RUN chmod +x /docker-entrypoint.sh 
-
 ## Create App user 
 # Set the home directory to our app user's home.
 ENV HOME=/app
@@ -32,5 +29,4 @@ ENV APP_HOME=/app
 WORKDIR /app
 
 EXPOSE 8888
-ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["bash"]
