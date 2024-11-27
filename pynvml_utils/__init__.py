@@ -1,4 +1,3 @@
-import pynvml
 from .smi import nvidia_smi
 
-__version__ = pynvml.__version__
+__version__ = '12.0.0'

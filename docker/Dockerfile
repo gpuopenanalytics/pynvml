@@ -6,26 +6,20 @@
 # BUILD: docker build --network=host --file docker/Dockerfile --tag pynvml .
 # RUN: docker run --gpus all --rm -it  pynvml
 ##############################################################
-FROM python:3.6
+FROM python:3.9
 
 ENV DEBIAN_FRONTEND noninteractive 
 
-ADD ./requirements.txt /app/requirements.txt
+ADD . /app/.
+RUN <<EOF
+cd /app
+pip install --no-cache-dir --upgrade pip
+pip install --no-cache-dir -e .
 
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r /app/requirements.txt && \
-    rm -rf ~/.cache/pip
-
-ADD ./pynvml /app/pynvml
-ADD ./setup.py /app/
-ADD ./setup.cfg /app/
-ADD ./README.md /app/
-ADD ./PKG-INFO /app/
-ADD ./MANIFEST.in /app/
-ADD ./help_query_gpu.txt /app/
-ADD docker/entrypoint.sh /docker-entrypoint.sh
-
-RUN chmod +x  /docker-entrypoint.sh 
+find /app -type f -name '*.pyc' -delete
+find /app -type d -name '__pycache__' -delete
+rm -rf ~/.cache/pip
+EOF
 
 ## Create App user 
 # Set the home directory to our app user's home.
@@ -35,5 +29,4 @@ ENV APP_HOME=/app
 WORKDIR /app
 
 EXPOSE 8888
-ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["bash"]

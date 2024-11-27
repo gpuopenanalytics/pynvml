@@ -92,7 +92,7 @@ def pci_info(ngpus, handles):
 # Test pynvml.nvmlSystemGetNVMLVersion
 def test_nvmlSystemGetNVMLVersion(nvml):
     vsn = 0.0
-    vsn = pynvml.nvmlSystemGetNVMLVersion().decode()
+    vsn = pynvml.nvmlSystemGetNVMLVersion()
     print("[NVML Version: " + vsn + "]", end=" ")
     assert vsn > LooseVersion("0.0")
 
@@ -107,14 +107,14 @@ def test_nvmlSystemGetCudaDriverVersion(nvml):
 def test_nvmlSystemGetProcessName(nvml):
     procname = None
     procname = pynvml.nvmlSystemGetProcessName(os.getpid())
-    print("[Process: " + str(procname.decode()) + "]", end=" ")
+    print("[Process: " + str(procname) + "]", end=" ")
     assert procname != None
 
 
 # Test pynvml.nvmlSystemGetDriverVersion
 def test_nvmlSystemGetDriverVersion(nvml):
     vsn = 0.0
-    vsn = pynvml.nvmlSystemGetDriverVersion().decode()
+    vsn = pynvml.nvmlSystemGetDriverVersion()
     print("[Driver Version: " + vsn + "]", end=" ")
     assert vsn > LooseVersion("0.0")  # Developing with 396.44
 

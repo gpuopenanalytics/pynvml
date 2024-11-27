@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pynvml"
+version = "12.0.0"
+description = "Python utilities for the NVIDIA Management Library"
+readme = { file = "README.md", content-type = "text/markdown" }
+authors = [
+    { name = "NVIDIA Corporation" },
+]
+license = { text = "BSD-3-Clause" }
+requires-python = ">=3.9"
+dependencies = [
+    "nvidia-ml-py>=12.0.0,<13.0.0a0",
+]
+classifiers = [
+    "Development Status :: 7 - Inactive",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Hardware",
+    "Topic :: System :: Systems Administration",
+    "Programming Language :: Python :: 3",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=3.6",
+    "pytest-runner",
+    "pytest-cov",
+]
+
+[project.urls]
+Homepage = "https://github.com/gpuopenanalytics/pynvml"
+Source = "https://github.com/gpuopenanalytics/pynvml"
+
+[tool.setuptools]
+license-files = ["LICENSE.txt"]
+
+[tool.setuptools.packages.find]
+exclude = [
+    "notebooks",
+    "docs",
+    "tests",
+]
