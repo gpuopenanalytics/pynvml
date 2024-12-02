@@ -58,7 +58,7 @@ Release Notes
 -------------
 
 -   Version 12.0.0
-    - Remove pynvml module and depend on nvidia-ml-py
+    - Remove pynvml module and depend on nvidia-ml-py instead
     - Pin to nvidia-ml-py>=12.0.0,<13.0.0a0
 
 
