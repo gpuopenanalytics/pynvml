@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pynvml"
-version = "13.0.0"
+version = "13.0.1"
 description = "Python utilities for the NVIDIA Management Library"
 readme = { file = "README.md", content-type = "text/markdown" }
 authors = [
