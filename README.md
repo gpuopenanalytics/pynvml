@@ -1,5 +1,7 @@
 > [!WARNING]
 > 
+> **This project is now deprecated. It's packages will eventually be removed from PyPI and conda-forge.**
+>
 > **The `pynvml` module is NOT developed or maintained in this project!**
 > 
 > This project provides unofficial NVML Python utilities (i.e. the `pynvml_utils` module).
@@ -57,9 +59,9 @@ print(nvsmi.DeviceQuery('--help-query-gpu'), end='\n')
 Release Notes
 -------------
 
--   Version 12.0.0
-    - Remove pynvml module and depend on nvidia-ml-py instead
-    - Pin to nvidia-ml-py>=12.0.0,<13.0.0a0
+-   Version 13.0.0
+    - Both pynvml and pynvml_utils are now deprecated.
+    - Pin to nvidia-ml-py>=12.0.0
 
 
 Old Releases
@@ -124,3 +126,6 @@ Old Releases
     - Updated README to encourage migration to nvidia-ml-py
 -   Version 11.5.3
     - Update versioneer
+-   Version 12.0.0
+    - Remove pynvml module and depend on nvidia-ml-py instead
+    - Pin to nvidia-ml-py>=12.0.0,<13.0.0a0
